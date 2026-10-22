@@ -1,26 +1,26 @@
 # Lignarc Bed Project
 
-Website trình BOD cho dự án giường gỗ joinery của Lignarc (Amazon US & Wayfair).
+Website trình BOD cho dự án giường gỗ joinery **Lignarc Kumi** (Amazon US & Wayfair). Mỗi phần là một tab riêng:
 
-- **I · Thị trường**: quy mô global, Amazon US bed frames (SmartScout), chất liệu, size, dải giá, thiết kế, màu, search demand, trend 24 tháng.
-- **II · AllForWood & Bme**: doanh thu, category, dải giá, dòng chủ lực, top ASIN (Helium 10).
-- **III · Deepdive giường**: 22 dòng giường, gallery, thông số, selling point, review tốt/xấu, pain point.
-- **IV · Đề xuất**: Lignarc Joinery Bed (Acacia, King/Queen, $499/$459), nghiên cứu joinery, spec, định giá, unit economics, kịch bản doanh thu, roadmap.
+- **Tổng quan**: luận điểm, render 3D tương tác.
+- **I · Thị trường**: global & kênh bán; Amazon US (tool SmartScout); chất liệu/size/thiết kế; bộ lọc sản phẩm có ảnh; từ khoá; brand; xu hướng.
+- **II · AFW & Bme**: doanh thu, category, dòng chủ lực.
+- **III · Giường đối thủ**: 22 dòng giường, gallery, thông số, review.
+- **IV · Đề xuất**: cấu hình 3D (Geometric / Diagonal / Không đầu, 6 màu, King/Queen), sản phẩm tham khảo, giá, unit economics, kế hoạch.
+- **V · Bản vẽ & lắp ráp**: lắp ráp 3D từng bước, bản vẽ kỹ thuật, BOM và phương án đóng thùng.
 
 ## Xem web
-Mở `index.html` trực tiếp, hoặc bật GitHub Pages: Settings → Pages → Deploy from branch `main` / root.
+GitHub Pages: https://khoimr11.github.io/Lignarc-Bed-Project/
 
 ## Cấu trúc
 ```
-index.html            # bản build 1 file (ảnh và dữ liệu nhúng sẵn)
-build.py              # ghép src/ thành index.html
-src/src.html          # template HTML/CSS/JS
-src/data.json         # số liệu đã tổng hợp
-src/thumbs.json       # ảnh thumbnail sản phẩm (base64)
-src/img/              # ảnh render & lifestyle
-src/pipeline/prep_site.py  # script tạo data.json từ dữ liệu SmartScout / Helium 10 gốc (không kèm trong repo)
+index.html
+assets/style.css   # giao diện (palette Lignarc)
+assets/app.js      # tabs, chart, bảng, bộ lọc, bản vẽ SVG, BOM
+assets/bed3d.js    # mô hình 3D giường Kumi (three.js), phòng ngủ, lắp ráp
+assets/data.js     # số liệu tổng hợp AFW/Bme + thumbnail dự phòng
+assets/market.js   # dữ liệu tool SmartScout (sản phẩm, brand, từ khoá)
+img/render/        # ảnh render 3D tĩnh
 ```
 
-Sửa giao diện: chỉnh `src/src.html` rồi chạy `python3 build.py`.
-
-Nguồn dữ liệu: SmartScout export (tool Amazon Bed Frames Intelligence), Helium 10 Black Box/Xray (10/2026), crawl store Amazon AllForWood & Bme, MarketIntelo, Retail Dive, Mattress Clarity. Số liệu SmartScout và Helium 10 là ước tính.
+Nguồn: SmartScout, Helium 10 (10/2026), crawl store Amazon, MarketIntelo, Retail Dive, Mattress Clarity. Số liệu là ước tính. Ảnh sản phẩm Lignarc là render 3D dựng bằng code.
