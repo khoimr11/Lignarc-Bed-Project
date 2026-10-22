@@ -7,7 +7,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
@@ -39,7 +39,7 @@
     <div style="display:grid;gap:18px">
       <div class="eyebrow">Đề xuất dự án · Bed / Bedroom · Amazon US & Wayfair</div>
       <h1>Lignarc <em>Kumi</em> Bed</h1>
-      <p class="lede">Giường gỗ Acacia lắp mộng kiểu Nhật: <b>0 ốc vít ở khung, không cần dụng cụ, lắp dưới 10 phút</b>. Có 2 option headboard và 1 bản không đầu, size King & Queen, giá $399–$499. Thiết kế dựa trên dữ liệu SmartScout, Helium 10 và review của AllForWood và Bme.</p>
+      <p class="lede">Giường gỗ Acacia lắp mộng kiểu Nhật: <b>0 ốc vít ở khung, không cần dụng cụ, lắp dưới 10 phút</b>. 10 kiểu đầu giường (gỗ, mây mắt cáo, vải, paper cord, dây thừng…) và 3 bản không đầu, chân chữ thập hoặc trụ tròn, size King & Queen, giá $399–$549, <b>1 thùng</b> cho FBA. Thiết kế dựa trên dữ liệu SmartScout, Helium 10 và review của AllForWood và Bme.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <a class="btn acc" href="#proposal">Xem sản phẩm đề xuất →</a>
         <a class="btn alt" href="#build">Xem lắp ráp 3D</a>
@@ -47,11 +47,11 @@
       <p class="faint" style="font-size:12px">"Kumi" (組み) trong tiếng Nhật nghĩa là "ghép mộng". Đây là tên gợi ý, có thể đổi.</p>
     </div>
     <div class="viewer glass" id="heroViewer" style="padding:0">
-      <img class="poster" src="img/render/life_geo.jpg" alt="Render 3D giường Lignarc Kumi, headboard Geometric, màu Medium Brown, trong phòng ngủ">
+      <img class="poster" src="img/render/l_cane.jpg" alt="Render 3D giường Lignarc Kumi, đầu giường mây mắt cáo, trong phòng ngủ">
       <span class="hint">Kéo để xoay 360°</span>
       <div class="hud">
         <div class="glass seg" id="heroHb">
-          <button data-hb="geo" class="on">Geometric</button><button data-hb="diag">Diagonal</button><button data-hb="none">Không đầu</button>
+          <button data-hb="cane" class="on">Mây mắt cáo</button><button data-hb="fabric">Gỗ + vải</button><button data-hb="geo">Geometric</button><button data-hb="arch">Arch</button><button data-hb="none">Không đầu</button>
         </div>
         <div class="glass swatches" id="heroSw"></div>
       </div>
@@ -206,6 +206,17 @@
     <div class="glass pad"><h4>Doanh thu / tháng theo category</h4><div class="chartbox"><canvas id="cCat"></canvas></div></div>
     <div class="glass pad"><h4>Số ASIN theo dải giá</h4><div class="chartbox"><canvas id="cBrandBand"></canvas></div></div>
   </div>
+  <div class="sub"><h3>Thị phần theo collection (Helium 10, 30 ngày)</h3><span class="chip">Collection xác định theo tên dòng trong title & store</span></div>
+  <div class="grid g3">
+    <div class="glass pad"><h4 style="color:var(--afw)">AllForWood · tỷ trọng collection</h4><div class="chartbox"><canvas id="cCollAFW"></canvas></div></div>
+    <div class="glass pad"><h4 style="color:var(--bme)">Bme · tỷ trọng collection</h4><div class="chartbox"><canvas id="cCollBME"></canvas></div></div>
+    <div class="glass pad"><h4>Thị phần collection trong từng category (2 brand cộng lại)</h4><div class="chartbox"><canvas id="cCollCat"></canvas></div></div>
+  </div>
+  <div class="sub"><h3>Trendline theo category & collection</h3><span class="chip" id="trendSrc">Helium 10 Xray · sales theo tháng</span></div>
+  <div class="grid g2" id="trendBlock">
+    <div class="glass pad"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h4>Doanh thu theo category / tháng</h4><div class="seg" id="tcBrand"><button data-b="AllForWood" class="on">AllForWood</button><button data-b="Bme">Bme</button></div></div><div class="chartbox tall"><canvas id="cCatTrend"></canvas></div></div>
+    <div class="glass pad"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h4>Doanh thu theo collection / tháng</h4><div class="seg" id="tcMode"><button data-m="abs" class="on">$/tháng</button><button data-m="share">% thị phần</button></div></div><div class="chartbox tall"><canvas id="cCollTrend"></canvas></div></div>
+  </div>
   <div class="sub"><h3>Chi tiết từng brand</h3><div class="seg" id="brandTabs"><button data-b="AllForWood" class="on">AllForWood</button><button data-b="Bme">Bme</button></div></div>
   <div class="glass pad"><h4 id="heroTitle"></h4><div class="refgrid" id="brandHero" style="margin-top:12px"></div></div>
   <div class="grid g-a" style="margin-top:16px">
@@ -223,7 +234,7 @@
     <h2><span id="nLines"></span> dòng giường · <span id="nImgs"></span> hình ảnh</h2>
     <p class="lede">Chọn một dòng để xem gallery, thông số, selling point và review tốt/xấu.</p>
   </div>
-  <div class="subtabs" id="bdTabs"><button data-p="library" class="on">Thư viện dòng giường</button><button data-p="charts">So sánh</button><button data-p="reviews">Review</button><button data-p="trendasin">Trendline ASIN</button></div>
+  <div class="subtabs" id="bdTabs"><button data-p="library" class="on">Thư viện dòng giường</button><button data-p="charts">So sánh</button><button data-p="reviews">Review</button><button data-p="book">Book BSP</button><button data-p="trendasin">Trendline ASIN</button></div>
   <div class="pane" data-pane="library">
     <div class="seg" id="lineFilter" style="margin-bottom:12px"><button data-f="all" class="on">Tất cả</button><button data-f="AllForWood">AllForWood</button><button data-f="Bme">Bme</button></div>
     <div class="grid g-b" style="align-items:start">
@@ -243,11 +254,20 @@
     </div>
   </div>
   <div class="pane" data-pane="reviews" hidden>
+    <p class="lede" id="revMeta" style="margin-bottom:14px"></p>
     <div class="grid g2">
-      <div class="glass pad"><h4>Khía cạnh: số review tích cực và tiêu cực</h4><div class="chartbox tall"><canvas id="cAspect"></canvas></div></div>
-      <div class="glass pad"><h4>Pain point trong review 1–3★ (% số review chê)</h4><div class="chartbox tall"><canvas id="cPain"></canvas></div></div>
+      <div class="glass pad"><h4>Khách khen gì · theo collection giường</h4><div class="chartbox tall"><canvas id="cAspect"></canvas></div></div>
+      <div class="glass pad"><h4>Khách chê gì · theo collection giường</h4><div class="chartbox tall"><canvas id="cPainColl"></canvas></div></div>
     </div>
-    <div class="glass pad" style="margin-top:16px"><div class="tbl-wrap"><table id="tReviewInsight"></table></div></div>
+    <div class="glass pad" style="margin-top:16px"><h4>Pain point giường theo brand (% trên số review chê)</h4><div class="chartbox"><canvas id="cPain"></canvas></div></div>
+    <div class="sub"><h3>Review insight theo collection</h3></div>
+    <div class="glass pad"><div class="tbl-wrap"><table id="tReviewInsight"></table></div></div>
+  </div>
+  <div class="pane" data-pane="book" hidden>
+    <p class="lede" style="margin-bottom:12px">Mỗi collection là một cuốn "book": trang bìa ghi Big Selling Point, các trang sau là từng selling point trên listing kèm ảnh thật và đối chiếu với review (xác nhận hay phản bác). Cuốn đầu tiên là Lignarc Kumi.</p>
+    <div class="seg" id="bookSel" style="margin-bottom:14px"></div>
+    <div class="book-wrap"><div class="book" id="book"></div></div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-top:14px"><button class="btn alt" id="bkPrev">← Trang trước</button><span class="mono faint" id="bkPg"></span><button class="btn acc" id="bkNext">Lật trang →</button></div>
   </div>
   <div class="pane" data-pane="trendasin" hidden>
     <div class="glass pad pending" style="display:grid;gap:10px">
@@ -262,28 +282,34 @@
 <section class="view" id="v-proposal" data-view="proposal" hidden>
   <div class="view-head">
     <div class="eyebrow">IV · Đề xuất sản phẩm</div>
-    <h2>Lignarc Kumi: một khung joinery, ba phiên bản</h2>
-    <p class="lede">Khung Acacia lắp mộng với chân chữ thập. Headboard là module tuỳ chọn, nên cùng một khung bán được cả 3 phiên bản, giảm tồn kho và chi phí khuôn.</p>
+    <h2>Lignarc Kumi: một khung joinery, nhiều lựa chọn đầu giường</h2>
+    <p class="lede">Khung Acacia lắp mộng (chân chữ thập hoặc trụ tròn), headboard là module thay được. Mọi phiên bản dùng chung khung, đi <b>1 thùng</b> cho FBA và lắp không dụng cụ.</p>
   </div>
-  <div class="subtabs" id="prTabs"><button data-p="config" class="on">Cấu hình 3D</button><button data-p="why">Vì sao chọn</button><button data-p="refs">Sản phẩm tham khảo</button><button data-p="price">Giá & unit economics</button><button data-p="plan">Kế hoạch & rủi ro</button></div>
+  <div class="subtabs" id="prTabs"><button data-p="config" class="on">Cấu hình 3D</button><button data-p="ideas">Ý tưởng thiết kế</button><button data-p="why">Vì sao chọn</button><button data-p="refs">Sản phẩm tham khảo</button><button data-p="specs">Specs & FOB Target</button><button data-p="price">Giá & unit economics</button><button data-p="collection">Mở rộng collection</button><button data-p="plan">Kế hoạch & rủi ro</button></div>
 
   <div class="pane" data-pane="config">
     <div class="config">
       <div class="viewer glass" id="cfgViewer" style="padding:0;aspect-ratio:16/10.5">
-        <img class="poster" src="img/render/st_geo.jpg" alt="Render studio giường Kumi">
+        <img class="poster" src="img/render/o_cane.jpg" alt="Render studio giường Kumi">
         <span class="hint">Kéo để xoay · cuộn để zoom</span>
         <div class="hud"><div class="glass seg" id="cfgMode"><button data-m="studio" class="on">Studio</button><button data-m="lifestyle">Phòng ngủ</button></div>
           <div class="glass seg" id="cfgView"><button data-cv="three" class="on">3/4</button><button data-cv="front">Chính diện</button><button data-cv="side">Bên hông</button><button data-cv="detail">Chi tiết mộng</button></div></div>
       </div>
-      <div class="glass pad" style="display:grid;gap:16px">
-        <div class="opt-group"><span class="lbl">Phiên bản</span><div class="seg" id="cfgHb"><button data-hb="geo" class="on">Geometric</button><button data-hb="diag">Diagonal</button><button data-hb="none">Không đầu</button></div></div>
-        <div class="opt-group"><span class="lbl">Size</span><div class="seg" id="cfgSize"><button data-s="King" class="on">King</button><button data-s="Queen">Queen</button></div></div>
+      <div class="glass pad" style="display:grid;gap:14px">
+        <div class="opt-group"><span class="lbl">Đầu giường</span><div class="seg" id="cfgHb"></div></div>
+        <div class="opt-group"><span class="lbl">Chân (joinery)</span><div class="seg" id="cfgLeg"><button data-l="cross" class="on">Chữ thập</button><button data-l="round">Trụ tròn</button><button data-l="floating">Floating</button></div></div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap"><div class="opt-group"><span class="lbl">Size</span><div class="seg" id="cfgSize"><button data-s="King" class="on">King</button><button data-s="Queen">Queen</button></div></div>
+          <div class="opt-group"><span class="lbl">Hộc kéo gầm</span><div class="seg" id="cfgDr"><button data-d="0" class="on">Không</button><button data-d="1">+ 2 hộc</button></div></div></div>
         <div class="opt-group"><span class="lbl">Màu Acacia · <span id="cfgColorName"></span></span><div class="swatches" id="cfgSw"></div></div>
-        <div style="display:flex;align-items:end;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><span class="lbl faint mono" style="font-size:10.5px;letter-spacing:.12em">GIÁ ĐỀ XUẤT</span><div class="price-big" id="cfgPrice"></div></div><span class="chip" id="cfgBox"></span></div>
+        <div style="display:flex;align-items:end;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><span class="faint mono" style="font-size:10.5px;letter-spacing:.12em">GIÁ ĐỀ XUẤT</span><div class="price-big" id="cfgPrice"></div></div><span class="chip good" id="cfgBox"></span></div>
         <dl class="kv" id="cfgSpec"></dl>
       </div>
     </div>
-    <div class="variants" style="margin-top:16px" id="variants"></div>
+  </div>
+
+  <div class="pane" data-pane="ideas" hidden>
+    <p class="lede" style="margin-bottom:14px">10 phương án đầu giường và 3 phương án không đầu, đều dựa trên cùng một khung joinery. Mỗi thẻ ghi rõ vật liệu, cách lắp (không ốc) và mức giá đề xuất. Bấm vào thẻ để mở cấu hình 3D tương ứng.</p>
+    <div class="ideas" id="ideas"></div>
   </div>
 
   <div class="pane" data-pane="why" hidden>
@@ -295,41 +321,52 @@
   </div>
 
   <div class="pane" data-pane="refs" hidden>
-    <p class="lede" style="margin-bottom:14px">Các sản phẩm dùng để benchmark thiết kế, vật liệu và giá. Bấm để mở trang gốc.</p>
+    <p class="lede" style="margin-bottom:14px">Sản phẩm dùng để benchmark thiết kế, vật liệu và giá. Bấm để mở trang gốc.</p>
     <div class="refgrid" id="refs"></div>
+  </div>
+
+  <div class="pane" data-pane="specs" hidden>
+    <div class="grid g2">
+      <div class="glass pad"><h4>Must have · bắt buộc để bán được</h4><div class="tbl-wrap" style="margin-top:8px"><table id="tMust"></table></div></div>
+      <div class="glass pad"><h4>Nice to have · tăng chuyển đổi / giá bán</h4><div class="tbl-wrap" style="margin-top:8px"><table id="tNice"></table></div></div>
+    </div>
+    <div class="sub"><h3>Kích thước & đóng gói theo phiên bản (1 thùng)</h3></div>
+    <div class="glass pad"><div class="tbl-wrap"><table id="tDims"></table></div></div>
+    <div class="sub"><h3>FOB Target: điền FOB từng size để xem GPM</h3><span class="chip warn">Ô vàng có thể sửa · liên kết với tab Giá & unit economics</span></div>
+    <div class="glass pad"><div class="tbl-wrap"><table id="tFobT" class="sheet"></table></div><p class="cap" id="fobNote"></p></div>
   </div>
 
   <div class="pane" data-pane="price" hidden>
     <div class="grid g-a">
       <div class="glass pad"><h4>Thang giá King/Queen của giường tham chiếu ($)</h4><div class="chartbox tall"><canvas id="cLadder"></canvas></div></div>
-      <div class="glass pad" style="display:grid;gap:12px;align-content:start">
-        <p class="insight"><b>Geometric / Diagonal: King $499 · Queen $459</b>. Ngang Bme Vivian và Georgina (Acacia + headboard), chỉ bằng ~40% giá Thuma.</p>
-        <p class="insight"><b>Không đầu: King $429 · Queen $399</b>. Cao hơn Thor/Merax ~$50 nhờ Acacia, ngang Nectar ($394/$494).</p>
-        <p class="insight">Launch với coupon 10–15% để lấy velocity và review, sau đó trả về giá niêm yết.</p>
-      </div>
+      <div class="glass pad" style="display:grid;gap:12px;align-content:start" id="priceNotes"></div>
     </div>
-    <div class="sub"><h3>Unit economics: chỉnh FOB để xem GPM</h3><div class="seg" id="ueVar"><button data-u="hb" class="on">Có headboard (2 thùng)</button><button data-u="none">Không đầu (1 thùng)</button></div></div>
+    <div class="sub"><h3>Unit economics</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><div class="seg" id="ueVar"><button data-u="hb" class="on">Có headboard</button><button data-u="none">Không đầu</button></div><div class="seg" id="uePf"><button data-p="amz" class="on">Amazon (FBA)</button><button data-p="wf">Wayfair</button></div></div></div>
     <div class="glass pad calc">
-      <div class="fields">
-        <label>Giá bán King ($)<input id="pK" type="number" value="499"></label>
-        <label>Giá bán Queen ($)<input id="pQ" type="number" value="459"></label>
-        <label>FOB King ($)<input id="fK" type="number" value="150"></label>
-        <label>FOB Queen ($)<input id="fQ" type="number" value="135"></label>
-        <label>Cước + 3PL / bộ ($)<input id="frt" type="number" value="45"></label>
-        <label>Thuế NK (% FOB)<input id="duty" type="number" value="12.5" step="0.5"></label>
-        <label>Phí FBA King/Queen ($)<input id="fba" type="text" value="95/90"></label>
-        <label>Referral (%)<input id="ref" type="number" value="15" step="0.5"></label>
-        <label>Quảng cáo TACoS (%)<input id="ads" type="number" value="10" step="0.5"></label>
-        <label>Coupon TB (%)<input id="disc" type="number" value="5" step="0.5"></label>
-        <label>Hoàn / hư (%)<input id="ret" type="number" value="4" step="0.5"></label>
-        <label>Đơn / tháng (M6)<input id="vol" type="number" value="150" step="10"></label>
-      </div>
-      <div class="grid g2" style="margin-top:16px" id="calcRes"></div>
-      <p class="insight" style="margin-top:14px" id="calcNote"></p>
-      <p class="cap">Phí FBA ước theo phí Helium 10 của giường cùng loại: Merax 85 lb 1 thùng ≈ $53; Bme 119–134 lb 2 thùng ≈ $100–115. Thuế 12.5% (Section 301, HTS 9403.50.90) theo airliftusa, cần forwarder xác nhận. FOB là số tạm.</p>
+      <div class="fields" id="ueGlobal"></div>
+      <div class="tbl-wrap" style="margin-top:16px"><table id="tUE" class="sheet"></table></div>
+      <div class="grid g2" style="margin-top:16px" id="ueBars"></div>
+      <div id="ueNotes" style="margin-top:14px;display:grid;gap:8px"></div>
     </div>
     <div class="sub"><h3>Kịch bản doanh thu tháng thứ 6</h3></div>
     <div class="grid g3" id="scen"></div>
+  </div>
+
+  <div class="pane" data-pane="collection" hidden>
+    <div class="grid g-a" style="align-items:start">
+      <div class="viewer glass" id="colViewer" style="padding:0;aspect-ratio:16/10">
+        <img class="poster" src="img/render/c_room.jpg" alt="Phòng ngủ Kumi đầy đủ bộ sưu tập">
+        <div class="hud"><button class="btn acc" id="colPlay">✦ Dựng phòng Kumi</button><div class="glass seg" id="colFocus"></div></div>
+      </div>
+      <div class="glass pad" style="display:grid;gap:12px;align-content:start">
+        <div class="eyebrow">Hệ sinh thái phòng ngủ Kumi</div>
+        <h3>1 ngôn ngữ thiết kế, 6 sản phẩm, bán chéo trên cùng 1 listing family</h3>
+        <p class="muted" style="font-size:13.5px">Cùng chân chữ thập/trụ tròn, cùng gỗ Acacia và 6 màu, cùng mảng mây mắt cáo. Khách mua giường được gợi ý trọn bộ qua A+, Brand Store và "Frequently bought together".</p>
+        <p class="insight">Bme đang bán nightstand/sideboard ≈ <b>$144K/tháng</b> bên cạnh giường; AFW mới có nightstand ≈ $13K/tháng. Bộ đồ phòng ngủ đồng bộ tăng giá trị đơn hàng và giữ khách trong hệ sinh thái Lignarc.</p>
+      </div>
+    </div>
+    <div class="sub"><h3>Timeline phát triển collection</h3></div>
+    <div class="timeline" id="timeline"></div>
   </div>
 
   <div class="pane" data-pane="plan" hidden>
@@ -339,12 +376,12 @@
     </div>
     <div class="dark pad" style="margin-top:16px;display:grid;gap:14px">
       <div class="eyebrow" style="color:var(--acacia-2)">Đề nghị BOD phê duyệt</div>
-      <h3>GO cho giai đoạn mẫu: khung Kumi + 2 option headboard + bản không đầu</h3>
+      <h3>GO cho giai đoạn mẫu: khung Kumi + 3 đầu giường + bản không đầu</h3>
       <ol class="muted" style="margin:0;padding-left:20px;display:grid;gap:8px">
-        <li>Duyệt ngân sách làm mẫu và test: lắp dưới 10 phút, 0 dụng cụ, tải tĩnh 1.000 lb, test rung/cót két, test rơi ISTA 3A cho thùng hàng.</li>
-        <li>Chốt FOB từ 2–3 nhà máy Acacia (gồm Bình Thắng) và điền vào bảng unit economics. Ngưỡng GO: GPM trước ads ≥ 25%.</li>
-        <li>Launch 6 SKU: Geometric và Không đầu × King/Queen × Medium Brown, cộng Light Brown cho King. Diagonal mở rộng sau khi test ảnh/A+.</li>
-        <li>Mở Wayfair (CastleGate) sau Amazon 60–90 ngày với chung bộ ảnh 3D và packaging.</li>
+        <li>Chọn 3 headboard để làm mẫu từ tab "Ý tưởng thiết kế" (đề xuất: Geometric, Rattan mắt cáo, Wood + Fabric), cộng bản không đầu chân chữ thập.</li>
+        <li>Duyệt ngân sách làm mẫu và test: lắp dưới 10 phút, 0 dụng cụ, tải tĩnh 1.000 lb, test cót két, test rơi ISTA 3A, đóng 1 thùng ≤ 150 lb.</li>
+        <li>Chốt FOB từ 2–3 nhà máy Acacia (gồm Bình Thắng), điền vào tab Specs & FOB Target. Ngưỡng GO: GPM trước ads ≥ 25% trên Amazon và ≥ 30% trên Wayfair.</li>
+        <li>Launch Amazon trước, Wayfair (CastleGate) sau 60–90 ngày; nightstand và hộc kéo gầm ra ngay trong quý kế tiếp.</li>
       </ol>
     </div>
   </div>
@@ -356,7 +393,7 @@
   <div class="view-head">
     <div class="eyebrow">V · Kỹ thuật</div>
     <h2>Bản vẽ, BOM và lắp ráp từng bước</h2>
-    <p class="lede">Bấm "Bước tiếp" để xem từng chi tiết vào vị trí. Khung giường không dùng ốc vít: mộng âm dương khoá bằng nêm gỗ, slat cuộn sẵn, headboard gắn bằng 2 núm vặn tay.</p>
+    <p class="lede">Bấm "Bước tiếp" để xem từng chi tiết vào vị trí. Khung giường không dùng ốc vít: mộng xuyên khoá bằng nêm gỗ âm trong chân, slat cuộn sẵn, headboard 4 module trượt vào rãnh cột và khoá bằng 2 núm vặn tay. Toàn bộ đi trong 1 thùng.</p>
   </div>
   <div class="subtabs" id="buTabs"><button data-p="assembly" class="on">Lắp ráp 3D</button><button data-p="drawings">Bản vẽ kỹ thuật</button><button data-p="bom">BOM & đóng gói</button></div>
   <div class="pane" data-pane="assembly">
@@ -364,7 +401,7 @@
       <div>
         <div class="stage glass" id="asmStage" style="padding:0">
           <div class="steplbl"><div class="glass"><div class="eyebrow" id="asmEyebrow">Bước 0 / 6</div><div style="font-family:var(--f-display);font-weight:700;font-size:18px;color:var(--espresso)" id="asmTitle">Mở hộp</div></div>
-            <div class="glass seg" id="asmHb"><button data-hb="geo" class="on">Có headboard</button><button data-hb="none">Không đầu</button></div></div>
+            <div class="glass seg" id="asmHb"><button data-hb="geo" class="on">Có headboard</button><button data-hb="none">Không đầu</button></div><div class="glass seg" id="asmLeg"><button data-l="cross" class="on">Chữ thập</button><button data-l="round">Trụ tròn</button></div></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
           <button class="btn alt" id="asmPrev">← Bước trước</button><button class="btn acc" id="asmNext">Bước tiếp →</button><button class="btn alt" id="asmPlay">▶ Tự chạy</button><button class="btn alt" id="asmReset">↺ Từ đầu</button>
@@ -414,6 +451,7 @@
 </main>
 
 <script src="assets/data.js"></script>
+<script src="assets/rv.js"></script>
 <script src="assets/market.js"></script>
 <script src="assets/bed3d.js"></script>
 <script src="assets/app.js"></script>
