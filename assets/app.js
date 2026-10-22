@@ -280,15 +280,15 @@ INIT.rivals = function () {
   const TR = window.TREND;
   if (!TR) { $('#trendBlock').insertAdjacentHTML('beforebegin', '<div class="glass pad pending" style="margin-bottom:12px"><b>Đang chờ dữ liệu Helium 10 Xray</b><p class="muted" style="font-size:13px;margin-top:4px">Trendline theo category và collection sẽ hiện ở đây sau khi cào xong sales theo ngày của từng ASIN.</p></div>'); }
   else {
-    $('#trendSrc').textContent = TR.src;
+    $('#trendSrc').textContent = TR.src; $('#trendBlock').insertAdjacentHTML('beforeend', `<p class="faint" style="font-size:12px;margin-top:10px">${esc(TR.note)}</p>`);
     let tb = 'AllForWood', tm = 'abs';
     const agg = (b, keyFn) => { const S = {}; Object.entries(TR.asin).forEach(([a, arr]) => { const m = AMAP[a]; if (!m || m[0] !== b) return; const k = keyFn(m); S[k] = S[k] || TR.months.map(() => 0); arr.forEach((v, i) => S[k][i] += v || 0); }); return S; };
     const drawT = () => {
       const C1 = agg(tb, m => m[1]); const ks = Object.keys(C1).sort((a, c) => C1[c].reduce((s, v) => s + v, 0) - C1[a].reduce((s, v) => s + v, 0)).slice(0, 6);
-      mk('cCatTrend', { type: 'line', data: { labels: TR.months, datasets: ks.map((k, i) => ({ label: k, data: C1[k], borderColor: PAL[i], backgroundColor: PAL[i] + '33', fill: false, tension: .3, pointRadius: 0, borderWidth: 2 })) }, options: { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: c => c.dataset.label + ': ' + fmt$(c.raw) } } }, scales: { y: moneyAxis, x: { grid: { display: false }, ticks: { maxTicksLimit: 10, maxRotation: 0 } } } } });
+      mk('cCatTrend', { type: 'line', data: { labels: TR.months, datasets: ks.map((k, i) => ({ label: k, data: C1[k].map(v => v || null), borderColor: PAL[i], backgroundColor: PAL[i] + '33', fill: false, tension: .3, pointRadius: 0, borderWidth: 2 })) }, options: { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: c => c.dataset.label + ': ' + fmt$(c.raw) } } }, scales: { y: moneyAxis, x: { grid: { display: false }, ticks: { maxTicksLimit: 10, maxRotation: 0 } } } } });
       const C2 = agg(tb, m => m[1] === 'Bedroom' ? m[2] : m[2] + ' · ' + m[1].split(' ')[0]); const k2 = Object.keys(C2).sort((a, c) => C2[c].reduce((s, v) => s + v, 0) - C2[a].reduce((s, v) => s + v, 0)).slice(0, 8);
       const tot = TR.months.map((_, i) => k2.reduce((s, k) => s + C2[k][i], 0));
-      mk('cCollTrend', { type: 'line', data: { labels: TR.months, datasets: k2.map((k, i) => ({ label: k, data: tm === 'abs' ? C2[k] : C2[k].map((v, j) => tot[j] ? +(v / tot[j] * 100).toFixed(1) : 0), borderColor: PAL[i % PAL.length], backgroundColor: PAL[i % PAL.length] + (tm === 'share' ? 'cc' : '33'), fill: tm === 'share', tension: .3, pointRadius: 0, borderWidth: tm === 'share' ? 1 : 2 })) },
+      mk('cCollTrend', { type: 'line', data: { labels: TR.months, datasets: k2.map((k, i) => ({ label: k, data: tm === 'abs' ? C2[k].map(v => v || null) : C2[k].map((v, j) => tot[j] ? +(v / tot[j] * 100).toFixed(1) : 0), borderColor: PAL[i % PAL.length], backgroundColor: PAL[i % PAL.length] + (tm === 'share' ? 'cc' : '33'), fill: tm === 'share', tension: .3, pointRadius: 0, borderWidth: tm === 'share' ? 1 : 2 })) },
         options: { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: c => c.dataset.label + ': ' + (tm === 'abs' ? fmt$(c.raw) : c.raw + '%') } } }, scales: { y: tm === 'abs' ? moneyAxis : { stacked: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: grid } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 10, maxRotation: 0 } } } } });
     };
     seg('#tcBrand', 'b', v => { tb = v; drawT(); }); seg('#tcMode', 'm', v => { tm = v; drawT(); }); drawT();
@@ -333,6 +333,18 @@ INIT.beds = function () {
   cards(); detail();
   subtabs('#bdTabs', '#v-beds', p => {
     if (p === 'book') BOOK.init();
+    if (p === 'trendasin' && window.TREND) {
+      const TR = window.TREND, AM = window.AMAP || {}; let fb = 'all';
+      const series = () => { const S = {}; Object.entries(TR.asin).forEach(([a, arr]) => { const m = AM[a]; if (!m || m[1] !== 'Bedroom' || (fb !== 'all' && m[0] !== fb)) return; const k = (m[0] === 'AllForWood' ? 'AFW ' : 'Bme ') + m[2]; S[k] = S[k] || TR.months.map(() => 0); arr.forEach((v, i) => S[k][i] += v); }); return S; };
+      const draw = () => { const S = series(); const ks = Object.keys(S).sort((x, y) => S[y].slice(-3).reduce((s, v) => s + v, 0) - S[x].slice(-3).reduce((s, v) => s + v, 0));
+        mk('cTrendBed', { type: 'line', data: { labels: TR.months, datasets: ks.slice(0, 10).map((k, i) => ({ label: k, data: S[k].map(v => v || null), borderColor: PAL[i % PAL.length], backgroundColor: PAL[i % PAL.length], tension: .3, pointRadius: 0, borderWidth: k.startsWith('AFW') ? 3 : 1.8, borderDash: k.startsWith('AFW') ? [] : [], spanGaps: false })) }, options: { interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10.5 }, boxWidth: 10 } }, tooltip: { callbacks: { label: c => c.dataset.label + ': ' + fmt$(c.raw) } } }, scales: { y: moneyAxis, x: { grid: { display: false }, ticks: { maxTicksLimit: 11, maxRotation: 0 } } } } });
+        const n = TR.months.length;
+        $('#tTrendBed').innerHTML = '<thead><tr><th>Dòng</th><th class="r">TB 3 tháng gần</th><th class="r">Đỉnh</th><th class="r">Tháng đỉnh</th><th class="r">Δ vs 3 tháng trước</th></tr></thead><tbody>' + ks.map(k => { const v = S[k]; const r3 = v.slice(n - 3).reduce((s, x) => s + x, 0) / 3, p3 = v.slice(n - 6, n - 3).reduce((s, x) => s + x, 0) / 3; const pk = Math.max(...v), pi = v.indexOf(pk); const d = p3 ? (r3 / p3 - 1) : null; return `<tr><td>${k}</td><td class="r num">${fmt$(r3)}</td><td class="r num">${fmt$(pk)}</td><td class="r num">${TR.months[pi]}</td><td class="r num" style="color:${d == null ? 'inherit' : d >= 0 ? 'var(--good)' : 'var(--bad)'}">${d == null ? 'mới' : (d >= 0 ? '+' : '') + Math.round(d * 100) + '%'}</td></tr>`; }).join('') + '</tbody>';
+      };
+      $('#taSrc').textContent = TR.note;
+      if (!INIT._ta) { INIT._ta = 1; seg('#taBrand', 'b', v => { fb = v; draw(); }); }
+      draw();
+    }
     if (p === 'charts') {
       mk('cLines', { type: 'bar', data: { labels: L.map(l => l.line), datasets: [{ data: L.map(l => l.rev), backgroundColor: L.map(lc), borderRadius: 5 }] }, options: { indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => L[c.dataIndex].brand + ' · ' + fmt$(c.raw) } } }, scales: { x: moneyAxis, y: { grid: { display: false }, ticks: { autoSkip: false, font: { size: 10.5 } } } } } });
       const LP = L.filter(l => l.pmin);

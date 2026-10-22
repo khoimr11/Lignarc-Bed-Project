@@ -270,10 +270,11 @@
     <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-top:14px"><button class="btn alt" id="bkPrev">← Trang trước</button><span class="mono faint" id="bkPg"></span><button class="btn acc" id="bkNext">Lật trang →</button></div>
   </div>
   <div class="pane" data-pane="trendasin" hidden>
-    <div class="glass pad pending" style="display:grid;gap:10px">
-      <h4>Đang cập nhật: sales theo ngày 3 năm của ≈180 ASIN giường (Helium 10 Xray)</h4>
-      <p class="muted" style="font-size:13.5px">Sau khi cào xong sẽ có trend theo dòng, size và màu, kèm mốc ra mắt và tác động của deal. Tạm thời xem trend 4 listing joinery/đối thủ gần nhất ở tab Thị trường → Xu hướng.</p>
+    <div class="grid g2" style="align-items:start">
+      <div class="glass pad"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h4>Doanh thu theo tháng của từng dòng giường</h4><div class="seg" id="taBrand"><button data-b="all" class="on">Tất cả</button><button data-b="AllForWood">AFW</button><button data-b="Bme">Bme</button></div></div><div class="chartbox" style="height:380px;margin-top:10px"><canvas id="cTrendBed"></canvas></div></div>
+      <div class="glass pad"><h4>Bảng tóm tắt</h4><div style="overflow-x:auto;margin-top:8px"><table class="tbl" id="tTrendBed"></table></div></div>
     </div>
+    <p class="faint" style="font-size:12px;margin-top:10px" id="taSrc"></p>
   </div>
   <div class="view-foot"><a class="btn alt" href="#rivals">← AFW & Bme</a><a class="btn" href="#proposal">IV · Đề xuất →</a></div>
 </section>
