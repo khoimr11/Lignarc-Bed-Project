@@ -291,6 +291,12 @@ INIT.rivals = function () {
       mk('cCollTrend', { type: 'line', data: { labels: TR.months, datasets: k2.map((k, i) => ({ label: k, data: tm === 'abs' ? C2[k].map(v => v || null) : C2[k].map((v, j) => tot[j] ? +(v / tot[j] * 100).toFixed(1) : 0), borderColor: PAL[i % PAL.length], backgroundColor: PAL[i % PAL.length] + (tm === 'share' ? 'cc' : '33'), fill: tm === 'share', tension: .3, pointRadius: 0, borderWidth: tm === 'share' ? 1 : 2 })) },
         options: { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: c => c.dataset.label + ': ' + (tm === 'abs' ? fmt$(c.raw) : c.raw + '%') } } }, scales: { y: tm === 'abs' ? moneyAxis : { stacked: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: grid } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 10, maxRotation: 0 } } } } });
     };
+    { let sm = 'abs'; const B = ['AllForWood', 'Bme']; const tot = {}; B.forEach(b => tot[b] = TR.months.map(() => 0)); Object.entries(TR.asin).forEach(([a, arr]) => { const m = AMAP[a]; if (!m || !tot[m[0]]) return; arr.forEach((v, i) => tot[m[0]][i] += v || 0); });
+      const drawS = () => { const ds = B.map(b => ({ label: b, data: sm === 'abs' ? tot[b].map(v => v || null) : tot[b].map((v, i) => { const t = tot.AllForWood[i] + tot.Bme[i]; return t ? +(v / t * 100).toFixed(1) : null; }), borderColor: bc[b], backgroundColor: bc[b] + (sm === 'share' ? 'cc' : '22'), fill: sm === 'share' ? true : 'origin', tension: .35, pointRadius: 2.5, pointHoverRadius: 5, borderWidth: 2.5 }));
+        mk('cStoreTrend', { type: 'line', data: { labels: TR.months, datasets: ds }, options: { interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: c => c.dataset.label + ': ' + (sm === 'abs' ? fmt$(c.raw) : c.raw + '%') } } }, scales: { y: sm === 'abs' ? moneyAxis : { stacked: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: grid } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 12, maxRotation: 0 } } } } }); };
+      const n = TR.months.length, avg = (a, i, j) => a.slice(i, j).reduce((s, v) => s + v, 0) / (j - i);
+      $('#stKpi').innerHTML = B.map(b => { const t = tot[b]; const r3 = avg(t, n - 3, n), p3 = avg(t, n - 6, n - 3), pk = Math.max(...t); const d = p3 ? r3 / p3 - 1 : 0; return `<div class="glass pad" style="padding:14px 16px"><div class="mono faint" style="font-size:10.5px;letter-spacing:.16em">${b.toUpperCase()}</div><div style="font:600 26px var(--f-head);color:${bc[b]};margin-top:4px">${fmt$(r3)}<span class="faint" style="font-size:12px;font-weight:500">/tháng TB 3T</span></div><div style="font-size:12.5px;margin-top:4px"><b style="color:${d >= 0 ? 'var(--good)' : 'var(--bad)'}">${d >= 0 ? '+' : ''}${Math.round(d * 100)}%</b> so với 3 tháng trước · đỉnh ${fmt$(pk)} (${TR.months[t.indexOf(pk)]})</div></div>`; }).join('') + '<p class="faint" style="font-size:11.5px">Cộng toàn bộ 51 parent đã cào (giường, nightstand, butcher block, sideboard, TV stand, ghế…). AFW chỉ có số từ khi H10 ghi nhận parent mới (phần lớn từ 11/2025–04/2026).</p>';
+      seg('#stMode', 'm', v => { sm = v; drawS(); }); drawS(); }
     seg('#tcBrand', 'b', v => { tb = v; drawT(); }); seg('#tcMode', 'm', v => { tm = v; drawT(); }); drawT();
   }
   let tl;
@@ -422,8 +428,8 @@ function fbaFee(lb, box) { // US FBA, extra-large tier (longest side > 59"), non
 const ECON = {
   g: { freight: 8500, duty: 25, coupon: 5, ads: 10, ret: 3, fuel: 3.5, stor: .56, months: 2, wfCost: 50, dda: 2.5, coop: 0, wfShip: 0 },
   rows: {
-    'King|hb': { fob: 150, price: 499, wf: 749, load: null }, 'Queen|hb': { fob: 135, price: 459, wf: 689, load: null },
-    'King|none': { fob: 105, price: 429, wf: 649, load: null }, 'Queen|none': { fob: 95, price: 399, wf: 599, load: null }
+    'King|hb': { fob: 150, price: 499, load: null }, 'Queen|hb': { fob: 135, price: 459, load: null },
+    'King|none': { fob: 105, price: 429, load: null }, 'Queen|none': { fob: 95, price: 399, load: null }
   }
 };
 Object.keys(ECON.rows).forEach(k => { ECON.rows[k].load = Math.floor(CONT / cbm(PACK[k].box)); ECON.rows[k].box = PACK[k].box.slice(); ECON.rows[k].lb = PACK[k].lb; });
@@ -439,7 +445,7 @@ function calcRow(k) {
   const amzFees = ref + fb.fee + fuel + stor + ret, gp = net - amzFees - cogs, ads = net * g.ads / 100;
   const amz = { net, ref, fba: fb.fee, bill: fb.bill, fuel, stor, ret, cuft, ads, gp, gpm: gp / net, cm: gp - ads, cmp: (gp - ads) / net, maxFob: (net - amzFees - freight - net * .25) / (1 + g.duty / 100) };
   // Wayfair: cost (revenue to Lignarc) = wfCost% of Wayfair retail; DDA = % of cost
-  const cost = r.wf * g.wfCost / 100, dda = cost * g.dda / 100, coop = cost * g.coop / 100, ship = g.wfShip;
+  r.wf = r.price; const cost = r.price * g.wfCost / 100, dda = cost * g.dda / 100, coop = cost * g.coop / 100, ship = g.wfShip;
   const wgp = cost - dda - coop - ship - cogs;
   const wf = { cost, dda, coop, ship, gp: wgp, gpm: wgp / cost, maxFob: (cost - dda - coop - ship - freight - cost * .25) / (1 + g.duty / 100) };
   return { k, r, freight, duty, cogs, amz, wf, cbm: cbm(r.box) };
@@ -471,6 +477,45 @@ INIT.proposal = function () {
   subtabs('#prTabs', '#v-proposal', p => PR[p] && PR[p]());
 };
 const PR = {};
+
+const IC = {
+  wood: '<path d="M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3v10c0 1.7-3.6 3-8 3s-8-1.3-8-3z"/><ellipse cx="12" cy="7" rx="8" ry="3"/><path d="M12 7c0 0 2-.6 2 0s-4 .6-4 0 4-1.4 5-.5"/>',
+  joint: '<rect x="3" y="9" width="18" height="6" rx="1"/><rect x="9" y="3" width="6" height="18" rx="1"/><path d="M11 9v6M13 9v6"/>',
+  noscrew: '<circle cx="12" cy="12" r="8"/><path d="M8 12h8M12 8v8"/><path d="M5 5l14 14"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',
+  box: '<path d="M3 8l9-4 9 4-9 4z"/><path d="M3 8v8l9 4 9-4V8"/><path d="M12 12v8"/>',
+  weight: '<path d="M6 9h12l2 11H4z"/><circle cx="12" cy="6" r="2.5"/>',
+  beam: '<path d="M3 10h18M3 14h18"/><path d="M8 14v6M16 14v6"/>',
+  felt: '<path d="M4 8h16M4 12h16M4 16h16"/><circle cx="4" cy="8" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="16" r="1"/>',
+  leaf: '<path d="M5 19C5 10 11 5 20 4c-1 9-6 15-15 15z"/><path d="M5 19l8-8"/>',
+  shield: '<path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  swap: '<path d="M4 8h13l-3-3M20 16H7l3 3"/>',
+  round: '<rect x="4" y="4" width="16" height="16" rx="5"/>'
+};
+const ic = k => `<svg class="ki" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+const R = n => `<img src="img/render/${n}.jpg" alt="" loading="lazy">`;
+const KB = [
+  () => `<div class="kp kp-cover"><div class="kp-img">${R('l_cane')}</div><div class="kp-txt"><div class="kb-logo">${document.querySelector('.lgsvg') ? document.querySelector('.lgsvg').outerHTML : 'LIGNARC'}</div><div class="kp-eye">The Kumi Collection · Joinery Bed</div><h2 class="kp-h">Gỗ thật.<br>Mộng thật.<br><em>Một thùng.</em></h2><p class="kp-p">Giường Acacia đặc lắp hoàn toàn bằng mộng nêm kiểu Nhật. Không vít, không dụng cụ, 5 bước dưới 10 phút.</p><div class="kp-stats">${[['0', 'con vít'], ['<10′', 'lắp xong'], ['1', 'thùng FBA'], ['1,000', 'lb tải']].map(x => `<div><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div></div></div>`,
+  () => `<div class="kp kp-bleed">${R('o_cane')}<div class="kp-over"><div class="kp-eye">01 · Vật liệu</div><h2 class="kp-h">Solid Acacia.<br>Không veneer, không MDF.</h2><div class="kp-feats">${[['wood', 'Acacia đặc sấy 8–10%', 'Ít cong vênh, vân gỗ khác nhau ở từng giường'], ['round', 'Cạnh bo R3', 'An toàn cho trẻ nhỏ, cầm chắc tay'], ['leaf', 'Sơn gốc nước low-VOC', 'Không mùi, đạt chuẩn TSCA Title VI']].map(f => `<div>${ic(f[0])}<b>${f[1]}</b><span>${f[2]}</span></div>`).join('')}</div><div class="kp-sw">${SW.slice(0, 6).map(([k, c]) => `<i style="background:${c}" title="${cname(k)}"></i>`).join('')}<span>6 màu</span></div></div></div>`,
+  () => `<div class="kp kp-split"><div class="kp-img kp-hot">${R('d_cross')}${[[60, 50, '1', 'Mộng xuyên vào chân'], [66, 34, '2', 'Nêm kusabi côn 1:12'], [30, 42, '3', 'Ray flush, không lồi']].map(p => `<span class="hot" style="left:${p[0]}%;top:${p[1]}%"><b>${p[2]}</b><em>${p[3]}</em></span>`).join('')}</div><div class="kp-txt"><div class="kp-eye">02 · Joinery</div><h2 class="kp-h">Càng nằm<br>càng khít.</h2><p class="kp-p">Ray cắm mộng vào chân, thả nêm gỗ từ đỉnh chân xuống. Tải trọng ép nêm chặt hơn, nên khung không lỏng theo thời gian như ốc vít, và không kêu cót két.</p><div class="kp-list">${[['joint', 'Mộng chữ thập hoặc chân trụ tròn'], ['noscrew', '0 vít ở khung, 0 dụng cụ'], ['swap', 'Tháo ra lắp lại khi chuyển nhà']].map(x => `<div>${ic(x[0])}<span>${x[1]}</span></div>`).join('')}</div></div></div>`,
+  () => `<div class="kp kp-split kp-rev"><div class="kp-txt"><div class="kp-eye">03 · Độ chắc</div><div class="kp-big">1,000<small>lb</small></div><p class="kp-p">Tải trọng tĩnh thiết kế cho 2 người và nệm hybrid nặng. Thor ghi 800 lb.</p><div class="kp-grid2">${[['beam', 'Dầm giữa + 2 chân đỡ'], ['felt', '12 slat bọc nỉ, khe ≤ 3"'], ['shield', 'Không cần box spring'], ['weight', 'Gầm 9.25" cho hộc kéo']].map(x => `<div>${ic(x[0])}<span>${x[1]}</span></div>`).join('')}</div></div><div class="kp-img">${R('l_none')}</div></div>`,
+  () => `<div class="kp kp-hb"><div class="kp-head"><div class="kp-eye">04 · Modular headboard</div><h2 class="kp-h">1 khung · 10 kiểu đầu giường</h2><p class="kp-p">Đầu giường chia 4 module trượt vào rãnh cột. Mua thêm module để đổi phong cách mà không thay giường.</p></div><div class="kp-thumbs">${[['o_cane', 'Rattan mắt cáo'], ['o_arch', 'Arch cane'], ['o_fabric', 'Gỗ + vải foam'], ['o_papercord', 'Paper cord'], ['o_rope', 'Rope weave'], ['o_spindle', 'Spindle'], ['o_geo', 'Geometric'], ['o_diag', 'Diagonal'], ['o_panel', 'Classic panel'], ['o_none_float', 'Low · floating']].map(t => `<figure>${R(t[0])}<figcaption>${t[1]}</figcaption></figure>`).join('')}</div></div>`,
+  () => `<div class="kp kp-steps"><div class="kp-head"><div class="kp-eye">05 · Lắp ráp</div><h2 class="kp-h">5 bước, dưới 10 phút, 1 người</h2></div><div class="kp-img wide">${R('box_layout')}</div><ol class="kp-ol">${[['Dựng chân + ray đầu/cuối', 'Cắm mộng, không dụng cụ'], ['Trượt ray dọc, thả nêm', 'Nêm tự khoá khi chịu tải'], ['Đặt dầm giữa + 2 chân', 'Khớp vào khấc trên ray'], ['Trải slat cuộn', 'Slat nối dây nỉ, tự vào vị trí'], ['Gắn 4 module headboard', 'Trượt vào rãnh, vặn 2 núm tay']].map((x, i) => `<li><b>${i + 1}</b><div><strong>${x[0]}</strong><span>${x[1]}</span></div></li>`).join('')}</ol></div>`,
+  () => `<div class="kp kp-split"><div class="kp-img">${R('box_closed')}</div><div class="kp-txt"><div class="kp-eye">06 · Giao hàng</div><h2 class="kp-h">Cả giường<br>trong 1 thùng.</h2><p class="kp-p">88 × 16 × 9 in, 133 lb, thùng nắp chụp kraft 5 lớp in logo Lignarc. Mọi size, có hay không đầu giường đều 1 thùng: không lạc kiện, phí FBA thấp hơn, khách mở ra là thấy chi tiết đánh số 1–10.</p><div class="kp-list">${[['box', '1 thùng cho King & Queen'], ['clock', 'Giao 1 lần, không chờ kiện 2'], ['shield', 'Test rơi ISTA 3A']].map(x => `<div>${ic(x[0])}<span>${x[1]}</span></div>`).join('')}</div></div></div>`,
+  () => `<div class="kp kp-cmp"><div class="kp-head"><div class="kp-eye">07 · So sánh</div><h2 class="kp-h">Kumi so với giường gỗ bán chạy</h2></div><table class="kp-t"><thead><tr><th></th><th class="me">Lignarc Kumi</th><th>AllForWood Thor</th><th>Bme Vivian</th></tr></thead><tbody>${[['Gỗ', 'Acacia đặc', 'Rubberwood + slat LVL', 'Acacia + kim loại'], ['Lắp ráp', 'Mộng nêm, 0 vít, < 10 phút, 1 người', 'Joinery, ~15–20 phút, 1 người', '2 người, < 1 giờ, cần dụng cụ'], ['Đầu giường', '10 kiểu, thay module', 'Không có', '1 kiểu cố định'], ['Số thùng', '1', '1', '1'], ['Tải trọng', '1,000 lb', '800 lb', '—'], ['Giá', '$399–549', '$299–380', '$396–486']].map(r => `<tr><th>${r[0]}</th><td class="me">${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table><p class="kp-note">Thông số đối thủ lấy từ listing Amazon 10/2026; "—" là listing không ghi.</p></div>`,
+  () => `<div class="kp kp-duo"><div class="kp-head"><div class="kp-eye">08 · Hệ sinh thái</div><h2 class="kp-h">Từ phòng ngủ đến phòng khách</h2></div><div class="kp-two"><figure>${R('c_room')}<figcaption><b>Bedroom · 2027</b>Giường, nightstand, hộc kéo, bench, dresser, wardrobe</figcaption></figure><figure>${R('c_living')}<figcaption><b>Living · từ Q2/2028</b>TV stand, coffee table, sideboard, side table, chair</figcaption></figure></div></div>`,
+  () => `<div class="kp kp-back"><div class="kb-logo big">${document.querySelector('.lgsvg') ? document.querySelector('.lgsvg').outerHTML : 'LIGNARC'}</div><p class="kp-p">Made with solid Acacia · Designed for one box</p><div class="kp-stats">${[['3', 'năm bảo hành khung'], ['30', 'ngày đổi trả'], ['QR', 'video lắp 3D trong thùng']].map(x => `<div><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div></div>`
+];
+PR.kbook = function () {
+  if (PR._kb) return; PR._kb = 1; let i = 0;
+  const go = (n, dir) => { i = (n + KB.length) % KB.length; const st = $('#kbStage'); st.classList.remove('fl-n', 'fl-p'); void st.offsetWidth; st.innerHTML = KB[i](); if (dir) st.classList.add(dir > 0 ? 'fl-n' : 'fl-p'); $('#kbPg').textContent = `${i + 1} / ${KB.length}`; $$('#kbDots button').forEach((b, k) => b.classList.toggle('on', k === i)); };
+  $('#kbDots').innerHTML = KB.map((_, k) => `<button aria-label="Trang ${k + 1}"></button>`).join('');
+  $('#kbDots').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = [...b.parentNode.children].indexOf(b); go(k, k > i ? 1 : -1); });
+  $('#kbNext').onclick = () => go(i + 1, 1); $('#kbPrev').onclick = () => go(i - 1, -1);
+  document.addEventListener('keydown', e => { if (!$('#kb').offsetParent) return; if (e.key === 'ArrowRight') go(i + 1, 1); if (e.key === 'ArrowLeft') go(i - 1, -1); });
+  let sx = null; $('#kbStage').addEventListener('touchstart', e => sx = e.touches[0].clientX, { passive: true }); $('#kbStage').addEventListener('touchend', e => { if (sx == null) return; const d = e.changedTouches[0].clientX - sx; if (Math.abs(d) > 50) go(i + (d < 0 ? 1 : -1), d < 0 ? 1 : -1); sx = null; });
+  go(0);
+};
 PR.ideas = function () {
   const I = [
     ['geo', 'cross', 'o_geo', 'Tấm Acacia ghép 8 mảnh hình học; 4 module trượt vào rãnh cột.', ['Acacia', 'Hero'], 'std'],
@@ -541,10 +586,10 @@ PR.specs = function () {
   const drawDims = () => { $('#tDims').innerHTML = '<thead><tr><th>Size</th><th>Phiên bản</th><th>Kích thước SP (W×L×H)</th><th>Thùng (in)</th><th class="r">CBM</th><th class="r">Nặng thùng</th><th class="r">Billable FBA</th><th class="r">Pcs / 40\'HC</th></tr></thead><tbody>' + ROWS.map(([k]) => `<tr>${dimsRow(k).map((c, i) => `<td class="${i > 3 ? 'r num' : ''}">${c}</td>`).join('')}</tr>`).join('') + '</tbody>'; };
   function draw() {
     drawDims();
-    $('#tFobT').innerHTML = `<thead><tr><th>Phiên bản</th><th class="r">FOB target ($)</th><th class="r">Thuế ${ECON.g.duty}%</th><th class="r">Cước/pc</th><th class="r">COGS</th><th class="r">Giá Amazon</th><th class="r">GPM Amazon</th><th class="r">FOB max (Amz 25%)</th><th class="r">Giá Wayfair</th><th class="r">GPM Wayfair</th><th class="r">FOB max (WF 30%)</th></tr></thead><tbody>` +
+    $('#tFobT').innerHTML = `<thead><tr><th>Phiên bản</th><th class="r">FOB target ($)</th><th class="r">Thuế ${ECON.g.duty}%</th><th class="r">Cước/pc</th><th class="r">COGS</th><th class="r">Giá bán (2 sàn)</th><th class="r">GPM Amazon</th><th class="r">FOB max (Amz 25%)</th><th class="r">Giá WF (= Amz)</th><th class="r">GPM Wayfair</th><th class="r">FOB max (WF 30%)</th></tr></thead><tbody>` +
       ROWS.map(([k, n]) => { const c = calcRow(k), r = c.r; const wfMax = (c.wf.cost - c.wf.dda - c.wf.coop - c.wf.ship - c.freight - c.wf.cost * .30) / (1 + ECON.g.duty / 100);
         const col = v => v >= .25 ? C.good : v >= .15 ? '#a8781c' : C.bad;
-        return `<tr><td><b>${n}</b></td><td class="in">${inp('r.' + k + '.fob', r.fob)}</td><td class="calc">${money(c.duty)}</td><td class="calc">${money(c.freight)}</td><td class="calc"><b>${money(c.cogs)}</b></td><td class="in">${inp('r.' + k + '.price', r.price)}</td><td class="calc"><span class="gpm" style="color:${col(c.amz.gpm)}">${pct(c.amz.gpm)}</span></td><td class="calc">${money(Math.max(0, c.amz.maxFob))}</td><td class="in">${inp('r.' + k + '.wf', r.wf)}</td><td class="calc"><span class="gpm" style="color:${col(c.wf.gpm)}">${pct(c.wf.gpm)}</span></td><td class="calc">${money(Math.max(0, wfMax))}</td></tr>`; }).join('') + '</tbody>';
+        return `<tr><td><b>${n}</b></td><td class="in">${inp('r.' + k + '.fob', r.fob)}</td><td class="calc">${money(c.duty)}</td><td class="calc">${money(c.freight)}</td><td class="calc"><b>${money(c.cogs)}</b></td><td class="in">${inp('r.' + k + '.price', r.price)}</td><td class="calc"><span class="gpm" style="color:${col(c.amz.gpm)}">${pct(c.amz.gpm)}</span></td><td class="calc">${money(Math.max(0, c.amz.maxFob))}</td><td class="calc">$${r.price}</td><td class="calc"><span class="gpm" style="color:${col(c.wf.gpm)}">${pct(c.wf.gpm)}</span></td><td class="calc">${money(Math.max(0, wfMax))}</td></tr>`; }).join('') + '</tbody>';
     $('#fobNote').textContent = `COGS = FOB + thuế ${ECON.g.duty}% FOB + cước tàu ($${ECON.g.freight}/cont ÷ số pcs/cont). GPM Amazon tính sau referral, FBA (gồm phụ phí nhiên liệu), lưu kho, hoàn hàng; trước quảng cáo. GPM Wayfair = (Cost − DDA − COGS)/Cost, Cost = ${ECON.g.wfCost}% giá Wayfair. Sửa ô vàng để xem lại.`;
   }
   bindInputs($('#tFobT')); econListeners.push(() => { const a = document.activeElement; const p = a && a.dataset && a.dataset.path; draw(); if (p) { const el = document.querySelector(`#tFobT [data-path="${p}"]`); if (el) { el.focus(); const v = el.value; el.value = ''; el.value = v; } } });
@@ -573,12 +618,12 @@ PR.price = function () {
       $('#ueNotes').innerHTML = [`<b>Referral</b>: nội thất 15% phần giá đến $200 và 10% phần trên $200 (không phải 15% toàn bộ).`, `<b>FBA</b>: thùng có cạnh > 59" là tier Extra-large; phí tính trên cân nặng tính phí = max(cân thật, D×R×C/139). 70–150 lb: $51.32 + $0.75/lb trên 71 lb; trên 150 lb nhảy lên $194.95. Vì vậy mọi phiên bản phải gọn trong 1 thùng ≤ 150 lb.`, `<b>Phụ phí nhiên liệu & logistics</b> 3.5% trên phí FBA (từ 17/04/2026). <b>Lưu kho</b> oversize $0.56/cu ft/tháng (T1–9), $1.40 (T10–12). Inbound placement không áp cho Extra-large.`, `<b>Hoàn hàng</b>: phí returns processing chỉ tính khi tỷ lệ hoàn vượt ngưỡng ngành; ở đây đặt 3% giá như dự phòng.`].map(t => `<p class="insight" style="font-size:13px">${t}</p>`).join('');
     } else {
       $('#tUE').innerHTML = `<thead><tr><th rowspan="2">Size</th><th class="grp" colspan="3">Logistics</th><th class="grp" colspan="4">Giá vốn</th><th class="grp" colspan="5">Wayfair · $ và % trên Cost</th><th class="grp" colspan="2">Kết quả</th></tr>
-        <tr><th class="r">Pcs/40'HC</th><th class="r">CBM</th><th class="r">Thùng</th><th class="r">FOB</th><th class="r">Thuế</th><th class="r">Phí vận chuyển</th><th class="r">COGS</th><th class="r">Giá Wayfair</th><th class="r">Cost (${ECON.g.wfCost}%)</th><th class="r">DDA ${ECON.g.dda}%</th><th class="r">Co-op</th><th class="r">Ship</th><th class="r">Lợi nhuận gộp</th><th class="r">GPM</th></tr></thead><tbody>` +
-        C2.map(([n, c]) => { const w = c.wf, k = c.k, r = c.r; return `<tr><td><b>${n.split(' · ')[0]}</b></td><td class="in">${inp('r.' + k + '.load', r.load)}</td><td class="calc">${c.cbm.toFixed(3)}</td><td class="calc">${r.box.join('×')}</td><td class="in">${inp('r.' + k + '.fob', r.fob)}</td>${cell(c.duty, w.cost)}${cell(c.freight, w.cost)}<td class="calc"><b>${money(c.cogs)}</b><small>${pct(c.cogs / w.cost)}</small></td><td class="in">${inp('r.' + k + '.wf', r.wf)}</td><td class="calc"><b>${money(w.cost)}</b></td>${cell(w.dda, w.cost)}${cell(w.coop, w.cost)}${cell(w.ship, w.cost)}<td class="calc"><b>${money(w.gp)}</b></td><td class="calc"><span class="gpm" style="color:${w.gpm >= .3 ? C.good : w.gpm >= .2 ? '#a8781c' : C.bad}">${pct(w.gpm)}</span></td></tr>`; }).join('') + '</tbody>';
+        <tr><th class="r">Pcs/40'HC</th><th class="r">CBM</th><th class="r">Thùng</th><th class="r">FOB</th><th class="r">Thuế</th><th class="r">Phí vận chuyển</th><th class="r">COGS</th><th class="r">Giá bán (= Amz)</th><th class="r">Cost (${ECON.g.wfCost}%)</th><th class="r">DDA ${ECON.g.dda}%</th><th class="r">Co-op</th><th class="r">Ship</th><th class="r">Lợi nhuận gộp</th><th class="r">GPM</th></tr></thead><tbody>` +
+        C2.map(([n, c]) => { const w = c.wf, k = c.k, r = c.r; return `<tr><td><b>${n.split(' · ')[0]}</b></td><td class="in">${inp('r.' + k + '.load', r.load)}</td><td class="calc">${c.cbm.toFixed(3)}</td><td class="calc">${r.box.join('×')}</td><td class="in">${inp('r.' + k + '.fob', r.fob)}</td>${cell(c.duty, w.cost)}${cell(c.freight, w.cost)}<td class="calc"><b>${money(c.cogs)}</b><small>${pct(c.cogs / w.cost)}</small></td><td class="in">${inp('r.' + k + '.price', r.price)}</td><td class="calc"><b>${money(w.cost)}</b></td>${cell(w.dda, w.cost)}${cell(w.coop, w.cost)}${cell(w.ship, w.cost)}<td class="calc"><b>${money(w.gp)}</b></td><td class="calc"><span class="gpm" style="color:${w.gpm >= .3 ? C.good : w.gpm >= .2 ? '#a8781c' : C.bad}">${pct(w.gpm)}</span></td></tr>`; }).join('') + '</tbody>';
       const FW = [['dda', 'DDA', '#b5763f'], ['coop', 'Co-op', '#c9a57c'], ['ship', 'Ship', '#8ea089'], ['cogs', 'COGS', '#3b2e25'], ['gp', 'Lợi nhuận gộp', '#3f7d4f']];
       $('#ueBars').innerHTML = C2.map(([n, c]) => { const w = c.wf, parts = { dda: w.dda, coop: w.coop, ship: w.ship, cogs: c.cogs, gp: Math.max(0, w.gp) };
-        return `<div class="glass pad"><h4>${n} · Cost $${w.cost.toFixed(0)} (giá WF $${c.r.wf})</h4><div class="stackbar">${FW.map(f => `<span style="width:${Math.max(0, parts[f[0]] / w.cost * 100)}%;background:${f[2]}">${parts[f[0]] / w.cost > .06 ? pct(parts[f[0]] / w.cost, 0) : ''}</span>`).join('')}</div><div class="legend">${FW.map(f => `<span><i style="background:${f[2]}"></i>${f[1]} ${pct(parts[f[0]] / w.cost)}</span>`).join('')}</div><p class="cap">FOB tối đa để GPM Wayfair đạt 30%: <b style="color:var(--acacia)">${money(Math.max(0, (w.cost - w.dda - w.coop - w.ship - c.freight - w.cost * .3) / (1 + ECON.g.duty / 100)))}</b></p></div>`; }).join('');
-      $('#ueNotes').innerHTML = [`<b>Cost</b> (doanh thu Lignarc nhận) = ${ECON.g.wfCost}% giá bán Wayfair. <b>DDA</b> = ${ECON.g.dda}% trên cost.`, `<b>Co-op</b> và <b>ship</b> để 0 theo mặc định (sửa được ở trên); file Wayfair hiện tại của Lignarc đang ghi co-op 10% cost.`, `Giá Wayfair để mặc định ~1.5× giá Amazon vì Wayfair tính trên cost; chỉnh theo giá Wayfair thực tế.`].map(t => `<p class="insight" style="font-size:13px">${t}</p>`).join('');
+        return `<div class="glass pad"><h4>${n} · Cost $${w.cost.toFixed(0)} (giá bán $${c.r.price})</h4><div class="stackbar">${FW.map(f => `<span style="width:${Math.max(0, parts[f[0]] / w.cost * 100)}%;background:${f[2]}">${parts[f[0]] / w.cost > .06 ? pct(parts[f[0]] / w.cost, 0) : ''}</span>`).join('')}</div><div class="legend">${FW.map(f => `<span><i style="background:${f[2]}"></i>${f[1]} ${pct(parts[f[0]] / w.cost)}</span>`).join('')}</div><p class="cap">FOB tối đa để GPM Wayfair đạt 30%: <b style="color:var(--acacia)">${money(Math.max(0, (w.cost - w.dda - w.coop - w.ship - c.freight - w.cost * .3) / (1 + ECON.g.duty / 100)))}</b></p></div>`; }).join('');
+      $('#ueNotes').innerHTML = [`<b>Cost</b> (doanh thu Lignarc nhận) = ${ECON.g.wfCost}% giá bán Wayfair. <b>DDA</b> = ${ECON.g.dda}% trên cost.`, `<b>Co-op</b> và <b>ship</b> để 0 theo mặc định (sửa được ở trên); file Wayfair hiện tại của Lignarc đang ghi co-op 10% cost.`, `Giá bán <b>bằng nhau trên 2 sàn</b> (1 ô giá chung cho Amazon & Wayfair). Vì Wayfair chỉ trả cost = ${ECON.g.wfCost}% giá bán, cùng mức giá thì biên Wayfair thấp hơn Amazon; muốn GPM Wayfair ≥ 30% thì FOB phải ≤ cột “FOB max (WF 30%)”.`].map(t => `<p class="insight" style="font-size:13px">${t}</p>`).join('');
     }
   }
   drawG(); draw();
@@ -601,6 +646,16 @@ PR.collection = function () {
     ['Q3 2027', 'Kumi Bench / Ottoman', 'p_bench', 'Ghế cuối giường khung gỗ + đệm linen tháo được.', '$229', 'Hoàn thiện bộ'],
     ['Q4 2027', 'Kumi Dresser', 'p_dresser', '6 ngăn, mặt mây ở hàng trên, chân chữ thập.', '$599', 'Bme sideboard ≈ $92K/tháng'],
     ['Q1 2028', 'Kumi Wardrobe', 'p_wardrobe', 'Tủ 2 cánh mây mắt cáo, lắp mộng + chốt cam ẩn.', '$799', 'Wayfair ưu tiên']];
+  const lv = viewer($('#lrViewer'), { mode: 'living', color: 'medium', legs: 'cross', view: 'living' });
+  $('#lrPlay').addEventListener('click', () => { if (!lv) return; lv.setView('living'); lv.playCollection(600); });
+  const TL = [['Q2 2028', 'Kumi TV Stand 64"', 'p_tvstand', '2 cánh mây + khoang mở giữa, chân chữ thập; 1 thùng flat-pack.', '$449', 'Bme Calista ≈ $20K/tháng'],
+    ['Q2 2028', 'Kumi Coffee Table', 'p_coffee', 'Mặt Acacia 46 × 26", kệ dưới đan mây, ráp mộng 4 chân.', '$329', 'Bme Georgina ≈ $9K/tháng'],
+    ['Q3 2028', 'Kumi Sideboard 58"', 'p_sideboard', '3 cánh mây, kệ chỉnh được; dùng cho phòng khách và phòng ăn.', '$649', 'Bme Georgina ≈ $86K/tháng'],
+    ['Q3 2028', 'Kumi Side Table', 'p_sidetable', 'Bàn tròn Ø20" 2 tầng, 3 chân trụ; bán lẻ và set 2.', '$149 · set $269', 'Bundle với sofa/ghế'],
+    ['Q4 2028', 'Kumi Accent Chair', 'p_chair', 'Khung gỗ đặc, đệm linen tháo giặt được; đi 1 thùng.', '$399', 'Bme Papasan ≈ $13K/tháng'],
+    ['Q1 2029', 'Kumi Bookshelf', 'p_bookshelf', 'Kệ 5 tầng 64", chân trụ xuyên mộng, không vít.', '$279', 'Mở rộng sang Home office'],
+    ['Q1 2029', 'Kumi Console', 'p_console', 'Bàn console 48" có hộc mây, cho lối vào/sau sofa.', '$299', 'Hoàn thiện bộ']];
+  $('#timelineLR').innerHTML = TL.map(t => `<div class="tl glass pad" style="padding:12px"><span class="q">${t[0]}</span><img src="img/render/${t[2]}.jpg" alt="${t[1]}" loading="lazy"><h4>${t[1]}</h4><p>${t[3]}</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip good">${t[4]}</span><span class="chip">${t[5]}</span></div></div>`).join('');
   $('#timeline').innerHTML = T.map(t => `<div class="tl glass pad" style="padding:12px"><span class="q">${t[0]}</span><img src="img/render/${t[2]}.jpg" alt="${t[1]}" loading="lazy"><h4>${t[1]}</h4><p>${t[3]}</p><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip good">${t[4]}</span><span class="chip">${t[5]}</span></div></div>`).join('');
 };
 PR.plan = function () {
@@ -642,10 +697,27 @@ INIT.build = function () {
   seg('#asmLeg', 'l', v => { if (av) { av.set('legs', v); av.setStep(cur); } });
   if (av) av.setStep(0);
   render();
-  subtabs('#buTabs', '#v-build', p => { if (p === 'drawings') DR.init(); if (p === 'bom') BOMV.init(); });
+  subtabs('#buTabs', '#v-build', p => { if (p === 'unbox') UB.init(); if (p === 'drawings') DR.init(); if (p === 'bom') BOMV.init(); });
 };
 
 // ---------- technical drawings (SVG) ----------
+const UB = { done: false };
+UB.init = function () {
+  if (UB.done) return; UB.done = true;
+  const v = viewer($('#ubViewer'), { mode: 'unbox', color: 'medium', view: 'boxclose' });
+  let open = false; const play = () => { if (!v) return; if (open) { v.resetUnbox(); setTimeout(() => v.unbox(), 700); } else v.unbox(); open = true; $('#ubHint').style.opacity = 0; };
+  $('#ubPlay').onclick = e => { e.stopPropagation(); play(); };
+  $('#ubReset').onclick = e => { e.stopPropagation(); if (v) v.resetUnbox(); open = false; $('#ubHint').style.opacity = 1; };
+  $('#ubViewer').addEventListener('click', e => { if (e.target.closest('button')) return; if (!open) play(); });
+  const LY = [['Lớp 3 (trên)', 'Ray dọc ×2, ray đầu/cuối ×2 dựng cạnh · cột đầu giường ×2 + chân góc ×2 + chân đỡ ×2 nối đuôi · dầm giữa · thanh đỡ slat ×2 · nẹp đỉnh · túi phụ kiện', '4.75"'],
+    ['Lớp 2', '12 slat Acacia nối dây nỉ, xếp 5 × 3', '1.5"'], ['Lớp 1 (đáy)', '4 module headboard 37 × 14", 2 chồng × 2, mặt mây úp vào nhau, lót giấy tổ ong', '2"']];
+  $('#ubLayers').innerHTML = LY.map(l => `<div style="display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:start;font-size:13px"><b>${l[0]}</b><span class="muted">${l[1]}</span><span class="mono faint">${l[2]}</span></div>`).join('') + '<p class="faint" style="font-size:12px">Cao lòng thùng 8.5": 2 + 1.5 + 4.75 = 8.25". Góc thùng có ke giấy, 2 đầu có khối EPE chống va đập.</p>';
+  const HW = [['A', 'Nêm gỗ kusabi', '×4 (+2 dự phòng)'], ['B', 'Núm vặn tay khoá headboard', '×2'], ['C', 'Miếng nỉ chống trượt + thẻ QR video 3D', '×8 · ×1']];
+  $('#ubHw').innerHTML = HW.map(h => `<div class="hw"><b>${h[0]}</b><div><span>${h[1]}</span><small>${h[2]}</small></div></div>`).join('');
+  const PT = [[1, 'Module headboard (mặt mây)', 4, '37 × 14 × 1'], [2, 'Slat cuộn, nối dây nỉ', 12, '75.8 × 2.75 × 0.5'], [3, 'Ray dọc', 2, '78.1 × 4.75 × 1.1'], [4, 'Ray đầu / cuối', 2, '74.1 × 4.75 × 1.1'], [5, 'Cột đầu giường (có rãnh)', 2, '48 × 2.75 × 2.75'], [6, 'Chân góc', 2, '14 × 2.75 × 2.75'], [7, 'Chân đỡ giữa', 2, '9.7 × 2.2 × 2.2'], [8, 'Dầm giữa', 1, '79.5 × 2.8 × 1.4'], [9, 'Thanh đỡ slat', 2, '78 × 1.2 × 1'], [10, 'Nẹp đỉnh headboard', 1, '78 × 2.2 × 1.2']];
+  $('#tUbParts').innerHTML = '<thead><tr><th>Số</th><th>Chi tiết</th><th class="r">SL</th><th class="r">Kích thước (in)</th><th>Dùng ở bước</th></tr></thead><tbody>' + PT.map(p => `<tr><td><span class="ubn">${p[0]}</span></td><td>${p[1]}</td><td class="r num">${p[2]}</td><td class="r num">${p[3]}</td><td class="muted">${({ 1: '5 · headboard', 2: '4 · trải slat', 3: '2 · ray dọc', 4: '1 · khung', 5: '1 · khung', 6: '1 · khung', 7: '3 · dầm giữa', 8: '3 · dầm giữa', 9: '3 · đỡ slat', 10: '5 · headboard' })[p[0]]}</td></tr>`).join('') + '</tbody>';
+};
+
 const DR = { size: 'King', hb: true };
 DR.init = function () { seg('#drSize', 's', v => { DR.size = v; DR.draw(); }); seg('#drHb', 'hb', v => { DR.hb = v === '1'; DR.draw(); }); DR.draw(); };
 DR.draw = function () {
@@ -772,8 +844,8 @@ const BOOK = (() => {
   return { init() {
     if (done) return; done = true;
     const B = window.BOOKS || {};
-    books = [KUMI, ...Object.values(B).filter(x => x.items && x.items.length)];
-    $('#bookSel').innerHTML = books.map((b, i) => `<button data-i="${i}" class="${i ? '' : 'on'}">${b.own ? '★ ' : ''}${esc(b.l)}<span class="faint" style="font-size:10px;margin-left:4px">${b.own ? '' : b.b === 'AllForWood' ? 'AFW' : 'Bme'}</span></button>`).join('');
+    books = [...Object.values(B).filter(x => x.items && x.items.length)];
+    $('#bookSel').innerHTML = books.map((b, i) => `<button data-i="${i}" class="${i ? '' : 'on'}">${esc(b.l)}<span class="faint" style="font-size:10px;margin-left:4px">${b.own ? '' : b.b === 'AllForWood' ? 'AFW' : 'Bme'}</span></button>`).join('');
     seg('#bookSel', 'i', i => { cur = +i; pg = 0; draw(1); });
     $('#bkNext').onclick = () => { const P = pagesOf(books[cur]); if (pg + 2 < P.length) { pg += 2; draw(1); } };
     $('#bkPrev').onclick = () => { if (pg) { pg -= 2; draw(-1); } };

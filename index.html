@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lignarc Bed Program</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 50%22%3E%3Cg fill=%22none%22 stroke=%22%235a3a22%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M13 5c-1.6 9-1.8 20 .4 29 1.6 5.6 7 7.4 14.6 5.6%22 stroke-width=%224%22/%3E%3Cpath d=%22M3.5 47.5c6-8.6 18-9.4 25.5-1%22 stroke-width=%223%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +20,7 @@
 <div class="ambient" aria-hidden="true"></div>
 
 <header class="topbar glass">
-  <div class="logo">LIGNARC<small>Bed Program · BOD</small></div>
+  <a class="logo" href="#overview"><svg class="lgsvg" viewBox="0 0 196 50" role="img" aria-label="Lignarc"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M13 5c-1.6 9-1.8 20 .4 29 1.6 5.6 7 7.4 14.6 5.6" stroke-width="3.4"/><path d="M3.5 47.5c6-8.6 18-9.4 25.5-1" stroke-width="2.1"/></g><g transform="translate(31 0) scale(.8 1)"><text x="0" y="39.5" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="40" letter-spacing="2" fill="currentColor">IGNARC</text></g></svg><small>Bed Program · BOD</small></a>
   <nav class="tabs-main" id="tabs" aria-label="Các trang">
     <span class="pill" id="pill"></span>
     <a href="#overview" data-v="overview">Tổng quan</a>
@@ -213,6 +214,8 @@
     <div class="glass pad"><h4>Thị phần collection trong từng category (2 brand cộng lại)</h4><div class="chartbox"><canvas id="cCollCat"></canvas></div></div>
   </div>
   <div class="sub"><h3>Trendline theo category & collection</h3><span class="chip" id="trendSrc">Helium 10 Xray · sales theo tháng</span></div>
+  <div class="glass pad" id="storeTrend" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><h4>Trendline toàn store · AllForWood vs Bme (doanh thu/tháng)</h4><div class="seg" id="stMode"><button data-m="abs" class="on">$/tháng</button><button data-m="share">% tỷ trọng 2 brand</button></div></div>
+    <div class="grid g-a" style="margin-top:10px;align-items:center"><div class="chartbox tall"><canvas id="cStoreTrend"></canvas></div><div id="stKpi" style="display:grid;gap:10px"></div></div></div>
   <div class="grid g2" id="trendBlock">
     <div class="glass pad"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h4>Doanh thu theo category / tháng</h4><div class="seg" id="tcBrand"><button data-b="AllForWood" class="on">AllForWood</button><button data-b="Bme">Bme</button></div></div><div class="chartbox tall"><canvas id="cCatTrend"></canvas></div></div>
     <div class="glass pad"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h4>Doanh thu theo collection / tháng</h4><div class="seg" id="tcMode"><button data-m="abs" class="on">$/tháng</button><button data-m="share">% thị phần</button></div></div><div class="chartbox tall"><canvas id="cCollTrend"></canvas></div></div>
@@ -264,7 +267,7 @@
     <div class="glass pad"><div class="tbl-wrap"><table id="tReviewInsight"></table></div></div>
   </div>
   <div class="pane" data-pane="book" hidden>
-    <p class="lede" style="margin-bottom:12px">Mỗi collection là một cuốn "book": trang bìa ghi Big Selling Point, các trang sau là từng selling point trên listing kèm ảnh thật và đối chiếu với review (xác nhận hay phản bác). Cuốn đầu tiên là Lignarc Kumi.</p>
+    <p class="lede" style="margin-bottom:12px">Mỗi collection là một cuốn "book": trang bìa ghi Big Selling Point, các trang sau là từng selling point trên listing kèm ảnh thật và đối chiếu với review (xác nhận hay phản bác). Lookbook của Lignarc Kumi nằm ở tab IV · Đề xuất.</p>
     <div class="seg" id="bookSel" style="margin-bottom:14px"></div>
     <div class="book-wrap"><div class="book" id="book"></div></div>
     <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-top:14px"><button class="btn alt" id="bkPrev">← Trang trước</button><span class="mono faint" id="bkPg"></span><button class="btn acc" id="bkNext">Lật trang →</button></div>
@@ -286,7 +289,7 @@
     <h2>Lignarc Kumi: một khung joinery, nhiều lựa chọn đầu giường</h2>
     <p class="lede">Khung Acacia lắp mộng (chân chữ thập hoặc trụ tròn), headboard là module thay được. Mọi phiên bản dùng chung khung, đi <b>1 thùng</b> cho FBA và lắp không dụng cụ.</p>
   </div>
-  <div class="subtabs" id="prTabs"><button data-p="config" class="on">Cấu hình 3D</button><button data-p="ideas">Ý tưởng thiết kế</button><button data-p="why">Vì sao chọn</button><button data-p="refs">Sản phẩm tham khảo</button><button data-p="specs">Specs & FOB Target</button><button data-p="price">Giá & unit economics</button><button data-p="collection">Mở rộng collection</button><button data-p="plan">Kế hoạch & rủi ro</button></div>
+  <div class="subtabs" id="prTabs"><button data-p="config" class="on">Cấu hình 3D</button><button data-p="kbook">Lookbook Kumi</button><button data-p="ideas">Ý tưởng thiết kế</button><button data-p="why">Vì sao chọn</button><button data-p="refs">Sản phẩm tham khảo</button><button data-p="specs">Specs & FOB Target</button><button data-p="price">Giá & unit economics</button><button data-p="collection">Mở rộng collection</button><button data-p="plan">Kế hoạch & rủi ro</button></div>
 
   <div class="pane" data-pane="config">
     <div class="config">
@@ -308,6 +311,11 @@
     </div>
   </div>
 
+  <div class="pane" data-pane="kbook" hidden>
+    <div class="kb" id="kb"><div class="kb-stage" id="kbStage"></div>
+      <div class="kb-bar"><button class="kb-nav" id="kbPrev" aria-label="Trang trước">←</button><div class="kb-dots" id="kbDots"></div><span class="mono faint" id="kbPg"></span><button class="kb-nav" id="kbNext" aria-label="Trang sau">→</button></div>
+    </div>
+  </div>
   <div class="pane" data-pane="ideas" hidden>
     <p class="lede" style="margin-bottom:14px">10 phương án đầu giường và 3 phương án không đầu, đều dựa trên cùng một khung joinery. Mỗi thẻ ghi rõ vật liệu, cách lắp (không ốc) và mức giá đề xuất. Bấm vào thẻ để mở cấu hình 3D tương ứng.</p>
     <div class="ideas" id="ideas"></div>
@@ -368,6 +376,20 @@
     </div>
     <div class="sub"><h3>Timeline phát triển collection</h3></div>
     <div class="timeline" id="timeline"></div>
+    <div class="sub" style="margin-top:34px"><h3>Giai đoạn 2 · Kumi Living Room (từ Q2/2028)</h3><span class="chip">Cùng ngôn ngữ chân chữ thập · Acacia · mây mắt cáo</span></div>
+    <div class="grid g-a" style="align-items:start">
+      <div class="viewer glass" id="lrViewer" style="padding:0;aspect-ratio:16/10">
+        <img class="poster" src="img/render/c_living.jpg" alt="Phòng khách Kumi">
+        <div class="hud"><button class="btn acc" id="lrPlay">✦ Dựng phòng khách</button></div>
+      </div>
+      <div class="glass pad" style="display:grid;gap:12px;align-content:start">
+        <div class="eyebrow">Vì sao Living Room</div>
+        <h3>Bme đang thu ≈ $140K/tháng từ phòng khách; AFW gần như chưa có</h3>
+        <p class="muted" style="font-size:13.5px">Các category Bme đang bán được: sideboard/cabinet (Georgina ≈ $91K/tháng), TV stand (Calista, Millie, Trapeze), coffee table (Georgina), ghế (Papasan ≈ $13K). AFW mới có bàn ăn Extension và ghế đôn. Kumi Living dùng lại khung, chân, cánh mây và màu của giường, nên chỉ cần thêm khuôn tủ, không phải phát triển vật liệu mới.</p>
+        <p class="insight">Thứ tự ra mắt theo doanh thu đối thủ và độ khó: TV stand → coffee table → sideboard → side table → accent chair → bookshelf → console.</p>
+      </div>
+    </div>
+    <div class="timeline" id="timelineLR" style="margin-top:14px"></div>
   </div>
 
   <div class="pane" data-pane="plan" hidden>
@@ -381,7 +403,7 @@
       <ol class="muted" style="margin:0;padding-left:20px;display:grid;gap:8px">
         <li>Chọn 3 headboard để làm mẫu từ tab "Ý tưởng thiết kế" (đề xuất: Geometric, Rattan mắt cáo, Wood + Fabric), cộng bản không đầu chân chữ thập.</li>
         <li>Duyệt ngân sách làm mẫu và test: lắp dưới 10 phút, 0 dụng cụ, tải tĩnh 1.000 lb, test cót két, test rơi ISTA 3A, đóng 1 thùng ≤ 150 lb.</li>
-        <li>Chốt FOB từ 2–3 nhà máy Acacia (gồm Bình Thắng), điền vào tab Specs & FOB Target. Ngưỡng GO: GPM trước ads ≥ 25% trên Amazon và ≥ 30% trên Wayfair.</li>
+        <li>Chốt FOB từ 2–3 nhà máy Acacia (gồm Bình Thắng), điền vào tab Specs & FOB Target. Ngưỡng GO (cùng một giá bán trên 2 sàn): GPM trước ads ≥ 25% trên Amazon và ≥ 30% trên Wayfair; bảng FOB Target cho thấy FOB tối đa cho từng ngưỡng.</li>
         <li>Launch Amazon trước, Wayfair (CastleGate) sau 60–90 ngày; nightstand và hộc kéo gầm ra ngay trong quý kế tiếp.</li>
       </ol>
     </div>
@@ -396,7 +418,7 @@
     <h2>Bản vẽ, BOM và lắp ráp từng bước</h2>
     <p class="lede">Bấm "Bước tiếp" để xem từng chi tiết vào vị trí. Khung giường không dùng ốc vít: mộng xuyên khoá bằng nêm gỗ âm trong chân, slat cuộn sẵn, headboard 4 module trượt vào rãnh cột và khoá bằng 2 núm vặn tay. Toàn bộ đi trong 1 thùng.</p>
   </div>
-  <div class="subtabs" id="buTabs"><button data-p="assembly" class="on">Lắp ráp 3D</button><button data-p="drawings">Bản vẽ kỹ thuật</button><button data-p="bom">BOM & đóng gói</button></div>
+  <div class="subtabs" id="buTabs"><button data-p="assembly" class="on">Lắp ráp 3D</button><button data-p="unbox">Đóng gói & unbox</button><button data-p="drawings">Bản vẽ kỹ thuật</button><button data-p="bom">BOM & đóng gói</button></div>
   <div class="pane" data-pane="assembly">
     <div class="asm">
       <div>
@@ -413,6 +435,25 @@
         <div class="steps" id="asmSteps"></div>
       </div>
     </div>
+  </div>
+  <div class="pane" data-pane="unbox" hidden>
+    <div class="grid g-a" style="align-items:start">
+      <div>
+        <div class="viewer glass" id="ubViewer" style="padding:0;aspect-ratio:16/10;cursor:pointer">
+          <img class="poster" src="img/render/box_closed.jpg" alt="Thùng Lignarc Kumi">
+          <div class="hud"><button class="btn acc" id="ubPlay">▶ Mở thùng</button><button class="btn alt" id="ubReset">↺ Đóng lại</button></div>
+          <div class="ub-hint" id="ubHint">Bấm vào thùng để unbox</div>
+        </div>
+        <p class="faint" style="font-size:12px;margin-top:8px">Mô phỏng King có headboard (cane). Bấm vào thùng: nắp mở, từng chi tiết bay ra và xếp theo thứ tự lắp, có đánh số như hướng dẫn in trong thùng. Kéo để xoay, cuộn để zoom.</p>
+      </div>
+      <div style="display:grid;gap:14px;align-content:start">
+        <div class="glass pad"><div class="eyebrow">Thùng FBA duy nhất</div><h3 style="margin-top:4px">88 × 16 × 9 in · 133 lb</h3><p class="muted" style="font-size:13px;margin-top:6px">Thùng 2 lớp kiểu nắp chụp (telescopic), giấy kraft 5 lớp BC-flute, in 1 màu logo Lignarc. Mọi phiên bản King/Queen, có hay không đầu đều đi 1 thùng.</p></div>
+        <div class="glass pad"><h4>Sắp xếp trong thùng (3 lớp)</h4><div id="ubLayers" style="display:grid;gap:8px;margin-top:10px"></div></div>
+        <div class="glass pad"><h4>Phụ kiện A–C (túi zip)</h4><div id="ubHw" class="hwgrid" style="margin-top:10px"></div></div>
+      </div>
+    </div>
+    <div class="sub"><h3>Danh sách chi tiết theo số in trên từng thanh</h3></div>
+    <div class="glass pad"><div class="tbl-wrap"><table id="tUbParts"></table></div></div>
   </div>
   <div class="pane" data-pane="drawings" hidden>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><div class="seg" id="drSize"><button data-s="King" class="on">King</button><button data-s="Queen">Queen</button></div><div class="seg" id="drHb"><button data-hb="1" class="on">Có headboard</button><button data-hb="0">Không đầu</button></div></div>

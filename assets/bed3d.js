@@ -311,6 +311,19 @@
     if (kind === 'bench') { const w = 54, d = 17, h = 18; legs(w, d, h - 3, 1.5, 2.2); M(rbox(w, 1.3, d, .3, 2), W(w, d), 0, h - 3.2, 0); M(rbox(w - 2, 3.4, d - 2, 1.4, 4), new THREE.MeshStandardMaterial({ map: linen('#d8cfc0', true), roughness: 1 }), 0, h - .9, 0); M(new THREE.BoxGeometry(w - 4, 1, 1), W(w, 1), 0, 5, 0); g.userData.dim = '54 × 17 × 18"'; }
     if (kind === 'wardrobe') { const w = 40, d = 22, h = 66, y0 = 8; legs(w, d, y0 + 1, 1.5, 2.4); caseBox(w, d, h, y0); [-1, 1].forEach(s => { M(new THREE.BoxGeometry(w / 2 - 1.2, h - 2.4, .8), W(h, w / 2, { rotate: true }), s * (w / 4 - .1), y0 + h / 2, d / 2); M(new THREE.PlaneGeometry(w / 2 - 6, h - 12), caneMat(w / 2, h), s * (w / 4 - .1), y0 + h / 2 + 1, d / 2 + .42); M(new THREE.BoxGeometry(.5, 8, .6), darker, s * 1.6, y0 + h / 2, d / 2 + .7); }); g.userData.dim = '40 × 22 × 74"'; }
     if (kind === 'drawers') { const w = 30, d = 26, dh = 6.5; const mk = (W1, H, D, x, y, z) => M(new THREE.BoxGeometry(W1, H, D), W(w, dh), x, y, z); mk(w, .5, d, 0, 1.25, 0); mk(w, dh, .6, 0, 1 + dh / 2, d / 2); mk(w, dh, .6, 0, 1 + dh / 2, -d / 2); mk(.6, dh, d, -w / 2, 1 + dh / 2, 0); mk(.6, dh, d, w / 2, 1 + dh / 2, 0); M(new THREE.BoxGeometry(8, 1.6, .7), darker, 0, 1 + dh - .7, d / 2 + .01); g.userData.dim = '30 × 26 × 7.5"'; }
+    // ---- Living room (same leg / joinery language, cane accents)
+    const fab = c => new THREE.MeshStandardMaterial({ map: linen(c || '#d8cfc0', true), roughness: 1 });
+    const caneDoor = (w, h, x, y, z) => { M(new THREE.BoxGeometry(w, h, .7), W(h, w, { rotate: true }), x, y, z); M(new THREE.PlaneGeometry(w - 3, h - 3), caneMat(w, h), x, y, z + .37); };
+    if (kind === 'tvstand') { const w = 64, d = 16, h = 16, y0 = 7; legs(w, d, y0 + 1, 1.5, 2.2); caseBox(w, d, h, y0); caneDoor(w / 3 - .6, h - 1.6, -w / 3, y0 + h / 2, d / 2 - .2); caneDoor(w / 3 - .6, h - 1.6, w / 3, y0 + h / 2, d / 2 - .2); M(new THREE.BoxGeometry(.8, h - 1.3, d - 1), W(h, d), -w / 6 + .3, y0 + h / 2, 0); M(new THREE.BoxGeometry(.8, h - 1.3, d - 1), W(h, d), w / 6 - .3, y0 + h / 2, 0); M(new THREE.BoxGeometry(w / 3 - 2, .7, d - 1.4), W(w, d), 0, y0 + h / 2, 0); g.userData.dim = '64 × 16 × 23"'; }
+    if (kind === 'coffee') { const w = 46, d = 26, h = 16; legs(w, d, h - 1.2, 2, 2.2); M(rbox(w, 1.4, d, .5, 3), W(w, d), 0, h - .7, 0); M(new THREE.BoxGeometry(w - 4, .8, d - 4), W(w, d), 0, 4.5, 0); M(new THREE.PlaneGeometry(w - 8, d - 8), caneMat(w, d), 0, 4.95, 0).rotation.x = -Math.PI / 2; g.userData.dim = '46 × 26 × 16"'; }
+    if (kind === 'sidetable') { const r = 10, h = 22; const top = M(new THREE.CylinderGeometry(r, r, 1.2, 40), W(20, 20), 0, h - .6, 0); M(new THREE.CylinderGeometry(r - 1.5, r - 1.5, .7, 36), W(20, 20), 0, 8, 0); [0, 1, 2].forEach(i => { const a = i * 2.094 + .5; const m = legMesh(legK === 'round' ? 'round' : 'square', h - 1.2, 1.8, W(h, 2, { rotate: true })); m.position.set(Math.cos(a) * (r - 2.2), (h - 1.2) / 2, Math.sin(a) * (r - 2.2)); m.castShadow = true; g.add(m); }); g.userData.dim = 'Ø20 × 22"'; }
+    if (kind === 'sideboard') { const w = 58, d = 17, h = 24, y0 = 8; legs(w, d, y0 + 1, 1.5, 2.3); caseBox(w, d, h, y0); [-1, 0, 1].forEach(i => caneDoor(w / 3 - 1, h - 1.8, i * w / 3, y0 + h / 2, d / 2 - .2)); [-1, 1].forEach(i => M(new THREE.BoxGeometry(.6, 6, .6), darker, i * (w / 6 - 1), y0 + h / 2, d / 2 + .5)); g.userData.dim = '58 × 17 × 32"'; }
+    if (kind === 'bookshelf') { const w = 32, d = 13, h = 64; [[-1], [1]].forEach(([s]) => { const m = legMesh(legK === 'round' ? 'round' : 'square', h, 2, W(h, 2, { rotate: true })); m.position.set(s * (w / 2 - 1), h / 2, d / 2 - 1); m.castShadow = true; g.add(m); const m2 = m.clone(); m2.position.z = -d / 2 + 1; g.add(m2); }); [3, 18, 33, 48, 62.5].forEach(y => M(rbox(w - .4, 1, d - .6, .2, 2), W(w, d), 0, y, 0)); const bc = [0x9b7b5b, 0x3f4a3c, 0xd8cbb5, 0x6f6a4c, 0xb8614a]; for (let i = 0; i < 9; i++) { const b = M(new THREE.BoxGeometry(1.4, 9 + (i % 3), 7.5), new THREE.MeshStandardMaterial({ color: bc[i % 5], roughness: .8 }), -w / 2 + 4 + i * 1.6, 18.5 + (9 + (i % 3)) / 2, 0); } M(new THREE.SphereGeometry(3, 20, 14), new THREE.MeshStandardMaterial({ color: 0xe9e1d3, roughness: .4 }), 7, 36.5, 0); for (let i = 0; i < 4; i++) M(new THREE.BoxGeometry(9 - i, 1, 7), new THREE.MeshStandardMaterial({ color: bc[(i + 2) % 5], roughness: .8 }), -5, 49 + i, 0); g.userData.dim = '32 × 13 × 64"'; }
+    if (kind === 'chair') { const w = 28, d = 30, sh = 15; [[-1, 1], [1, 1], [-1, -1], [1, -1]].forEach(([a, b]) => { const hh = b < 0 ? 30 : 22; const m = legMesh(legK === 'round' ? 'round' : 'square', hh, 2, W(hh, 2, { rotate: true })); m.position.set(a * (w / 2 - 1), hh / 2, b * (d / 2 - 1)); m.rotation.x = b < 0 ? -.12 : 0; m.castShadow = true; g.add(m); }); [-1, 1].forEach(a => M(rbox(2.2, 1.4, d + 1, .4, 2), W(d, 2), a * (w / 2 - 1), 22.5, 0)); M(new THREE.BoxGeometry(w - 2, 1, d - 2), W(w, d), 0, sh - 2, 0); M(rbox(w - 4, 4, d - 4, 1.6, 4), fab('#e6ddcf'), 0, sh + .5, 1); const bk = M(rbox(w - 4, 15, 4, 1.8, 4), fab('#e6ddcf'), 0, sh + 9, -d / 2 + 4); bk.rotation.x = -.2; M(new THREE.BoxGeometry(w - 2, 1.2, 1.2), W(w, 1), 0, 28, -d / 2 + 1.2); g.userData.dim = '28 × 30 × 30"'; }
+    if (kind === 'console') { const w = 48, d = 14, h = 30; legs(w, d, h - 1.2, 1.2, 2); M(rbox(w, 1.3, d, .4, 2), W(w, d), 0, h - .6, 0); M(new THREE.BoxGeometry(w - 2, 4.5, d - 1.5), W(w, 4), 0, h - 4, 0); [-1, 1].forEach(s => M(new THREE.PlaneGeometry(w / 2 - 4, 3), caneMat(w / 2, 3), s * (w / 4 - .5), h - 4, d / 2 - .7)); M(new THREE.BoxGeometry(w - 3, .8, d - 2), W(w, d), 0, 6, 0); g.userData.dim = '48 × 14 × 30"'; }
+    if (kind === 'sofa') { // neutral prop, not a Lignarc SKU
+      const w = 84, d = 36, cm = fab('#cfc5b6'); M(rbox(w, 9, d, 2, 3), cm, 0, 8.5, 0); [-1, 1].forEach(s => M(rbox(7, 14, d, 2.6, 3), cm, s * (w / 2 - 3.5), 11, 0)); M(rbox(w - 10, 16, 8, 3, 4), cm, 0, 19, -d / 2 + 4); [-1, 1].forEach(s => M(rbox(w / 2 - 6, 5, d - 9, 2.2, 4), cm, s * (w / 4 - 2), 15, 3)); [[-1], [1]].forEach(([s]) => M(rbox(16, 14, 4, 3, 4), fab(s < 0 ? '#6f6a4c' : '#b9774a'), s * (w / 2 - 17), 23, -d / 2 + 9).rotation.x = -.25); [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) => M(new THREE.CylinderGeometry(.9, .7, 4, 10), new THREE.MeshStandardMaterial({ color: 0x3a2a1e }), a * (w / 2 - 3), 2, b * (d / 2 - 3)));
+    }
     g.scale.setScalar(IN);
     return g;
   }
@@ -405,6 +418,104 @@
     return g;
   }
 
+  // ---------- Unboxing: 1-box FBA pack, numbered parts ----------
+  function drawLogo(c, x, y, h, color) { // Lignarc wordmark (L-arc + IGNARC), h = cap height px
+    const k = h / 34; c.save(); c.translate(x, y - 40 * k); c.scale(k, k); c.strokeStyle = color; c.fillStyle = color; c.lineCap = 'round';
+    c.lineWidth = 3.4; c.stroke(new Path2D('M13 5c-1.6 9-1.8 20 .4 29 1.6 5.6 7 7.4 14.6 5.6')); c.lineWidth = 2.1; c.stroke(new Path2D('M3.5 47.5c6-8.6 18-9.4 25.5-1'));
+    c.translate(31, 0); c.scale(.8, 1); c.font = '600 40px "Cormorant Garamond", Georgia, serif'; c.textBaseline = 'alphabetic'; try { c.letterSpacing = '2px'; } catch (e) {} c.fillText('IGNARC', 0, 39.5); c.restore();
+  }
+  function kraft(w, h, print) {
+    return canvasTex(w, h, (c, W2, H2) => {
+      c.fillStyle = '#c9a274'; c.fillRect(0, 0, W2, H2); const r = rng(77);
+      for (let i = 0; i < 9000; i++) { c.fillStyle = `rgba(${r() < .5 ? '255,240,215' : '110,75,40'},${r() * .07})`; c.fillRect(r() * W2, r() * H2, 1 + r() * 3, 1); }
+      for (let y = 0; y < H2; y += 6) { c.fillStyle = 'rgba(120,85,50,.035)'; c.fillRect(0, y, W2, 2); }
+      if (print) print(c, W2, H2);
+    });
+  }
+  function boxPrint(kind) {
+    const ink = '#2c2016';
+    if (kind === 'top') return kraft(1760, 320, (c, W2, H2) => {
+      drawLogo(c, 90, 200, 120, ink);
+      c.fillStyle = ink; c.font = '500 30px "Space Mono", monospace'; c.fillText('KUMI · JOINERY BED · KING · SOLID ACACIA', 92, 262);
+      c.strokeStyle = ink; c.lineWidth = 3; c.strokeRect(1180, 60, 520, 200);
+      c.font = '700 34px "Space Mono", monospace'; c.fillText('1 / 1 BOX', 1210, 115); c.font = '400 26px "Space Mono", monospace';
+      ['88 × 16 × 9 in · 133 lb', 'Tool-free · 0 screws · <10 min', 'Parts 1–10 + hardware A–C'].forEach((t, i) => c.fillText(t, 1210, 160 + i * 36));
+      // this-side-up arrows
+      c.lineWidth = 6; [880, 950].forEach(x => { c.beginPath(); c.moveTo(x, 250); c.lineTo(x, 90); c.moveTo(x - 24, 120); c.lineTo(x, 90); c.lineTo(x + 24, 120); c.stroke(); }); c.fillRect(850, 262, 130, 6);
+    });
+    if (kind === 'side') return kraft(1760, 180, (c) => { drawLogo(c, 70, 128, 78, ink); c.fillStyle = ink; c.font = '500 26px "Space Mono", monospace'; c.fillText('lignarc.com  ·  Made with solid Acacia', 1080, 108); c.strokeStyle = ink; c.lineWidth = 4; c.strokeRect(860, 40, 150, 100); c.beginPath(); c.moveTo(885, 60); c.lineTo(985, 60); c.lineTo(960, 120); c.lineTo(910, 120); c.closePath(); c.stroke(); });
+    if (kind === 'sidelow') return kraft(1760, 180, (c) => { drawLogo(c, 70, 165, 46, ink); c.fillStyle = ink; c.font = '500 20px "Space Mono", monospace'; c.fillText('KUMI · KING · 1 / 1', 1380, 160); });
+    if (kind === 'end') return kraft(320, 180, (c) => { drawLogo(c, 40, 118, 64, ink); });
+    return kraft(256, 256);
+  }
+  function buildUnbox(opt) {
+    const col = opt.color || 'medium'; let seed = 900; const W = (l, c, o) => woodMat(col, seed++, l, c, o);
+    const g = new THREE.Group(); const parts = [];
+    const BX = 88, BZ = 16, BY = 9, t = .25;
+    const kTop = boxPrint('top'), kSide = boxPrint('side'), kLow = boxPrint('sidelow'), kEnd = boxPrint('end'), kIn = kraft(256, 256);
+    const M = tx => new THREE.MeshStandardMaterial({ map: tx, roughness: .95 });
+    // tray (open top). Faces of BoxGeometry: +x,-x,+y,-y,+z,-z
+    const tray = new THREE.Group();
+    const wall = (w, h, d, x, y, z, mats) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mats); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; tray.add(m); };
+    const plain = M(kIn);
+    wall(BX, t, BZ, 0, t / 2, 0, plain);
+    wall(BX, BY - .3, t, 0, (BY - .3) / 2, BZ / 2 - t / 2, [plain, plain, plain, plain, M(kLow), plain]);
+    wall(BX, BY - .3, t, 0, (BY - .3) / 2, -BZ / 2 + t / 2, [plain, plain, plain, plain, plain, M(kLow)]);
+    wall(t, BY - .3, BZ, BX / 2 - t / 2, (BY - .3) / 2, 0, [plain, plain, plain, plain, plain, plain]);
+    wall(t, BY - .3, BZ, -BX / 2 + t / 2, (BY - .3) / 2, 0, [plain, plain, plain, plain, plain, plain]);
+    tray.position.z = -52; g.add(tray);
+    // telescoping lid (top + 4in skirt)
+    const lid = new THREE.Group(); const sk = 4.2, o = .3;
+    const lw = (w, h, d, x, y, z, mats) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mats); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; lid.add(m); };
+    lw(BX + o, t, BZ + o, 0, sk - t / 2, 0, [plain, plain, M(kTop), plain, plain, plain]);
+    lw(BX + o, sk, t, 0, sk / 2, (BZ + o) / 2, [plain, plain, plain, plain, M(kSide), plain]);
+    lw(BX + o, sk, t, 0, sk / 2, -(BZ + o) / 2, [plain, plain, plain, plain, plain, M(kSide)]);
+    lw(t, sk, BZ + o, (BX + o) / 2, sk / 2, 0, [M(kEnd), plain, plain, plain, plain, plain]);
+    lw(t, sk, BZ + o, -(BX + o) / 2, sk / 2, 0, [plain, M(kEnd), plain, plain, plain, plain]);
+    lid.position.set(0, BY - sk + .05, -52); lid.userData.home = lid.position.clone(); g.add(lid);
+    // tape strip across the lid
+    [-38, 38].forEach(x => { const tape = new THREE.Mesh(new THREE.BoxGeometry(2.6, sk + .06, BZ + o + .08), new THREE.MeshStandardMaterial({ color: 0xd9c49c, roughness: .3, transparent: true, opacity: .8 })); tape.position.set(x, sk / 2 + .02, 0); lid.add(tape); });
+    // ---- parts: [num, code, name, size(x,y,z), packed center(x,y,z), floor center(x,z), floorRotX, kind]
+    const y0 = t; // interior floor
+    const L = [];
+    const P = (num, name, sz, pk, fl, kind, extra) => L.push(Object.assign({ num, name, sz, pk, fl, kind }, extra || {}));
+    // layer 1: 4 headboard modules (37 × 14 × 1), 2 stacks of 2
+    [[0, 0], [1, 0], [0, 1], [1, 1]].forEach(([i, j], k) => P(1, 'Module headboard', [37, 1, 14], [-19.6 + i * 39.2, y0 + .5 + j * 1, 0], [72, -27 + k * 17.5], 'cane', { idx: k }));
+    // layer 2: 12 slats (75.8 × .5 × 2.75): 5 across × 3 high (last row 2)
+    for (let k = 0; k < 12; k++) { const r = Math.floor(k / 5), c = k % 5; P(2, 'Slat cuộn (nỉ)', [75.8, .5, 2.75], [-4, y0 + 2 + .25 + r * .5, -5.6 + c * 2.8], [-4, 26], 'slat', { stack: k }); }
+    // layer 3 (h 4.75): rails on edge + posts + legs + beam + cleats + cap
+    const ly = y0 + 3.5 + 4.75 / 2;
+    P(3, 'Ray dọc', [78.1, 4.75, 1.1], [-3, ly, -7.1], [-4, -30], 'rail', { flat: true }); P(3, 'Ray dọc', [78.1, 4.75, 1.1], [-3, ly, -5.95], [-4, -22], 'rail', { flat: true });
+    P(4, 'Ray đầu / cuối', [74.1, 4.75, 1.1], [-5, ly, -4.8], [-6, -14], 'rail', { flat: true }); P(4, 'Ray đầu / cuối', [74.1, 4.75, 1.1], [-5, ly, -3.65], [-6, -6], 'rail', { flat: true });
+    P(5, 'Cột đầu giường', [48, 2.75, 2.75], [-19.5, y0 + 3.5 + 1.375, -1.6], [-18, 38], 'leg'); P(5, 'Cột đầu giường', [48, 2.75, 2.75], [-19.5, y0 + 3.5 + 1.375, 1.25], [-18, 44], 'leg');
+    P(6, 'Chân góc', [14, 2.75, 2.75], [12.6, y0 + 3.5 + 1.375, -1.6], [20, 38], 'leg'); P(6, 'Chân góc', [14, 2.75, 2.75], [12.6, y0 + 3.5 + 1.375, 1.25], [20, 44], 'leg');
+    P(7, 'Chân đỡ giữa', [9.7, 2.2, 2.2], [25.4, y0 + 3.5 + 1.1, -1.6], [36, 38], 'leg'); P(7, 'Chân đỡ giữa', [9.7, 2.2, 2.2], [25.4, y0 + 3.5 + 1.1, 1.25], [36, 44], 'leg');
+    P(8, 'Dầm giữa', [79.5, 2.8, 1.4], [-3, y0 + 3.5 + 1.4, 3.4], [-4, 2], 'beam');
+    P(9, 'Thanh đỡ slat', [78, 1.2, 1], [-3, y0 + 3.5 + .6, 4.7], [-4, 9], 'cleat'); P(9, 'Thanh đỡ slat', [78, 1.2, 1], [-3, y0 + 3.5 + 1.8, 4.7], [-4, 14], 'cleat');
+    P(10, 'Nẹp đỉnh headboard', [78, 2.2, 1.2], [-3, y0 + 3.5 + 1.1, 6.6], [-4, 19.5], 'cleat');
+    P(0, 'Túi phụ kiện A–C', [6, 3, 5], [37.5, y0 + 3.5 + 1.5, 0], [52, 41], 'bag');
+    L.forEach((p, i) => {
+      let m;
+      const [sx, sy, sz] = p.sz;
+      if (p.kind === 'cane') { const cm = caneMat(sx, sz); cm.map.repeat.set(sx / 6, sz / 6); const wm = W(sx, sz); m = new THREE.Group(); const back = new THREE.Mesh(new THREE.BoxGeometry(sx - 2, .25, sz - 2), new THREE.MeshStandardMaterial({ color: 0x8a6a4a, roughness: .9 })); back.position.y = -sy / 2 + .15; m.add(back);
+        const frm = (w, d, x, z) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, sy + .02, d), wm); b.position.set(x, 0, z); m.add(b); }; frm(sx, 1.6, 0, -sz / 2 + .8); frm(sx, 1.6, 0, sz / 2 - .8); frm(1.6, sz, -sx / 2 + .8, 0); frm(1.6, sz, sx / 2 - .8, 0);
+        const pl = new THREE.Mesh(new THREE.PlaneGeometry(sx - 3, sz - 3), cm); pl.rotation.x = -Math.PI / 2; pl.position.y = sy / 2 - .1; m.add(pl); }
+      else if (p.kind === 'bag') { m = new THREE.Mesh(rbox(sx, sy, sz, .8, 3), new THREE.MeshStandardMaterial({ color: 0xf3efe6, roughness: .6, transparent: true, opacity: .92 })); const inner = new THREE.Mesh(new THREE.BoxGeometry(3, 1.6, 2.4), new THREE.MeshStandardMaterial({ color: 0x3b2a1e })); m.add(inner); }
+      else if (p.kind === 'leg') { m = new THREE.Mesh(rbox(sx, sy, sz, .3, 2), W(sx, sy)); }
+      else { m = new THREE.Mesh(rbox(sx, sy, sz, .2, 2), W(sx, Math.max(sy, sz))); }
+      m.traverse(o2 => { if (o2.isMesh) { o2.castShadow = true; o2.receiveShadow = true; } });
+      // floor pose: rails lie flat (rotate about x so the 4.75 face is down)
+      const fq = new THREE.Quaternion(); let fh = sy;
+      if (p.flat) { fq.setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0)); fh = sz; }
+      const fy = p.kind === 'slat' ? .25 + p.stack * .52 : fh / 2;
+      p.packP = new THREE.Vector3(p.pk[0], p.pk[1], p.pk[2] - 52); p.packQ = new THREE.Quaternion();
+      p.layP = new THREE.Vector3(p.fl[0], fy, p.fl[1]); p.layQ = fq;
+      m.position.copy(p.packP); m.userData.part = p; p.m = m; g.add(m); parts.push(p);
+    });
+    g.scale.setScalar(IN);
+    return { group: g, tray, lid, parts, BX, BZ, BY };
+  }
+
   // ---------- viewer ----------
   const THEMES = {
     lifestyle: { bg: 0xe9e2d6, wall: '#e8dfd2', panel: 0xdcd1c1, rug: '#d9cfbf', ceramic: 0xe9e1d3, pot: 0xcdbfa9 },
@@ -436,19 +547,39 @@
       controls.autoRotate = opts.autoRotate; controls.autoRotateSpeed = .6;
       controls.addEventListener('change', () => wake());
     }
-    let bed, bedding, room, ghost = [], items = [];
+    let bed, bedding, room, ghost = [], items = [], ub = null, labels = [], tw = [], overlay = null;
     let step = 99, anim = [];
     function build() {
       [bed && bed.root, bedding, room, ...items].forEach(x => x && scene.remove(x)); items = [];
       bed = buildBed(opts);
       bedding = buildBedding(bed.dims);
-      if (opts.mode !== 'piece') { scene.add(bed.root); scene.add(bedding); }
+      if (!['piece', 'living', 'unbox'].includes(opts.mode)) { scene.add(bed.root); scene.add(bedding); }
+      if (ub) { scene.remove(ub.group); ub = null; } labels.forEach(l => l.el.remove()); labels = [];
       if (opts.mode === 'lifestyle') { room = buildRoom(bed.dims, opts.color, THEMES.lifestyle); scene.add(room); scene.background = new THREE.Color(THEMES.lifestyle.bg); }
       else if (opts.mode === 'piece') {
         room = new THREE.Group(); const sh = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.ShadowMaterial({ opacity: .22 })); sh.rotation.x = -Math.PI / 2; sh.receiveShadow = true; room.add(sh); scene.add(room); scene.background = new THREE.Color(THEMES.studio.bg);
         const it = piece(opts.kind || 'nightstand', opts.color, opts.legs); scene.add(it); items.push(it);
         const bb = new THREE.Box3().setFromObject(it), sz = bb.getSize(new THREE.Vector3()), c = bb.getCenter(new THREE.Vector3()); const r = Math.max(sz.x, sz.y, sz.z);
         VIEWS.piece = [[c.x + r * 1.25, c.y + r * .75, c.z + r * 1.7], [c.x, c.y * .9, c.z]]; camSet = false; opts.view = 'piece';
+      }
+      else if (opts.mode === 'living') {
+        const d = { ow: 76, ol: 84, hasHB: true }; const wallZ = -46;
+        room = new THREE.Group(); room.add(buildRoom(d, opts.color, THEMES.lifestyle, { bare: true, wide: true })); scene.add(room); scene.background = new THREE.Color(THEMES.lifestyle.bg);
+        const sofa = piece('sofa', opts.color, opts.legs); sofa.position.set(0, 0, 62 * IN); sofa.rotation.y = Math.PI; room.add(sofa);
+        const tv = new THREE.Mesh(new THREE.BoxGeometry(50 * IN, 28.5 * IN, 1.2 * IN), [0, 0, 0, 0, 0, 0].map((_, i) => new THREE.MeshStandardMaterial({ color: i === 4 ? 0x15171a : 0x222222, roughness: i === 4 ? .15 : .5, metalness: .2 }))); tv.position.set(0, 36.6 * IN, (wallZ + 6) * IN); tv.castShadow = true; room.add(tv);
+        const P = [['tvstand', 0, wallZ + 9, 0, 'Kumi TV stand'], ['coffee', 0, 24, 0, 'Kumi coffee table'], ['chair', -50, 16, Math.PI / 2 - .5, 'Kumi accent chair'], ['sidetable', 54, 60, 0, 'Kumi side table'],
+          ['sideboard', -(d.ow / 2 + 74) + 9, 2, Math.PI / 2, 'Kumi sideboard'], ['bookshelf', d.ow / 2 + 74 - 7, -18, -Math.PI / 2, 'Kumi bookshelf'], ['console', d.ow / 2 + 74 - 8, 34, -Math.PI / 2, 'Kumi console']];
+        P.forEach(([k, x, z, r, name]) => { const it = piece(k, opts.color, opts.legs); it.position.set(x * IN, 0, z * IN); it.rotation.y = r; it.userData.name = name; it.userData.home = it.position.clone(); it.userData.kind = k; it.userData.base = it.scale.x; scene.add(it); items.push(it); if (opts.hideItems) it.visible = false; });
+        VIEWS.living = [[1.6, 2.6, 5.4], [-.1, .35, -.1]]; opts.view = opts.view || 'living';
+      }
+      else if (opts.mode === 'unbox') {
+        room = new THREE.Group(); const sh = new THREE.Mesh(new THREE.PlaneGeometry(16, 16), new THREE.ShadowMaterial({ opacity: .2 })); sh.rotation.x = -Math.PI / 2; sh.receiveShadow = true; room.add(sh); scene.add(room); scene.background = new THREE.Color(0xeee9e1);
+        ub = buildUnbox(opts); scene.add(ub.group);
+        if (!overlay) { overlay = document.createElement('div'); overlay.className = 'ub-ov'; container.style.position = container.style.position || 'relative'; container.appendChild(overlay); }
+        const seen = {}; ub.parts.forEach(p => { (seen[p.num] = seen[p.num] || []).push(p); });
+        labels = Object.entries(seen).map(([num, ps]) => { const c = ps.reduce((a, p) => a.add(p.layP), new THREE.Vector3()).multiplyScalar(1 / ps.length); c.y += 3; const el = document.createElement('div'); el.className = 'ub-l'; el.innerHTML = `<b>${+num ? num : 'A–C'}</b><span>${ps[0].name}${ps.length > 1 ? ' ×' + ps.length : ''}</span>`; overlay.appendChild(el); return { el, pos: c.multiplyScalar(IN), ps, show: false }; });
+        VIEWS.boxclose = [[1.9, 1.35, .35], [.05, .08, -1.32]]; VIEWS.layout = [[.65, 5.1, 2.6], [.6, 0, -.5]]; opts.view = opts.view || 'boxclose';
+        ub.parts.forEach(p => { p.m.position.copy(p.packP); p.m.quaternion.copy(p.packQ); }); ub.lid.position.copy(ub.lid.userData.home); ub.lid.quaternion.identity();
       }
       else if (opts.mode === 'collection') {
         room = buildRoom(bed.dims, opts.color, THEMES.lifestyle, { bare: true, wide: true }); scene.add(room); scene.background = new THREE.Color(THEMES.lifestyle.bg);
@@ -539,8 +670,10 @@
         });
         busy = true;
       }
+      if (tw.length) { tw = tw.filter(a => { const k = clamp((t - a.start) / a.dur, 0, 1); if (k <= 0) return true; const e = ease(k); a.m.position.lerpVectors(a.p0, a.p1, e); if (a.arc) a.m.position.y += Math.sin(Math.PI * e) * a.arc; if (a.q1) a.m.quaternion.copy(a.q0).slerp(a.q1, e); if (k >= 1 && a.done) a.done(); return k < 1; }); busy = true; }
       if (controls) { controls.update(); if (controls.autoRotate) busy = true; }
       renderer.render(scene, camera);
+      if (labels.length) { const w = container.clientWidth, h = container.clientHeight; labels.forEach(l => { if (!l.show) { l.el.style.opacity = 0; return; } const v = l.pos.clone().project(camera); l.el.style.opacity = 1; l.el.style.transform = `translate(${(v.x + 1) / 2 * w}px, ${(1 - v.y) / 2 * h}px) translate(-50%, -50%)`; }); }
       if (busy || t - lastInteract < 1500) requestAnimationFrame(loop); else running = false;
     }
     function flash(m) { setGlow(m, true); setTimeout(() => { setGlow(m, false); wake(); }, 380); }
@@ -556,6 +689,17 @@
       resetCollection() { items.forEach(it => { it.visible = false; }); wake(); },
       showAll() { items.forEach(it => { it.visible = true; it.scale.setScalar(it.userData.base); it.position.copy(it.userData.home); }); wake(); },
       focus(name) { const it = items.find(x => x.userData.kind === name); if (!it) return; const p = it.userData.home; tweenCam(new THREE.Vector3(p.x * .55 + (p.x >= 0 ? .2 : -.2), 1.4, p.z + 2.6), new THREE.Vector3(p.x, .45, p.z), .9); },
+      unbox() { if (!ub) return; const t0 = performance.now() + 100; labels.forEach(l => l.show = false);
+        const lid = ub.lid, lh = lid.userData.home; tw.push({ m: lid, p0: lh.clone(), p1: lh.clone().add(new THREE.Vector3(0, 26, 0)), start: t0, dur: 700 });
+        tw.push({ m: lid, p0: lh.clone().add(new THREE.Vector3(0, 26, 0)), p1: new THREE.Vector3(0, .2, -80), q0: new THREE.Quaternion(), q1: new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI, 0, 0)), start: t0 + 700, dur: 900 });
+        // lid ends upside down: shift so it rests on the floor
+        tw[tw.length - 1].p1.y = 4.4;
+        setTimeout(() => setView('layout'), 1300);
+        const order = ub.parts.slice().sort((a, b) => b.packP.y - a.packP.y || a.num - b.num);
+        order.forEach((p, i) => { const st = t0 + 1700 + i * 110; tw.push({ m: p.m, p0: p.packP.clone(), p1: p.layP.clone(), q0: p.packQ.clone(), q1: p.layQ.clone(), start: st, dur: 1000, arc: 26 + (i % 3) * 6, done: () => { const l = labels.find(L => L.ps.includes(p)); if (l) l.show = true; } }); });
+        wake(); return 1700 + order.length * 110 + 1000; },
+      resetUnbox() { if (!ub) return; tw = []; labels.forEach(l => l.show = false); ub.parts.forEach(p => { p.m.position.copy(p.packP); p.m.quaternion.copy(p.packQ); }); ub.lid.position.copy(ub.lid.userData.home); ub.lid.quaternion.identity(); setView('boxclose'); wake(); },
+      showLaid() { if (!ub) return; tw = []; ub.parts.forEach(p => { p.m.position.copy(p.layP); p.m.quaternion.copy(p.layQ); }); ub.lid.position.set(0, 4.4, -80); ub.lid.quaternion.setFromEuler(new THREE.Euler(Math.PI, 0, 0)); labels.forEach(l => l.show = true); wake(); },
       get items() { return items.map(i => i.userData.name); },
       canvas: renderer.domElement, colors: COLORS
     };
